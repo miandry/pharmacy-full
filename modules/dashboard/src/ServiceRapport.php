@@ -217,6 +217,8 @@ class ServiceRapport
                 $dateString =  $commande->field_date->value ;
                 $date = new \DateTime($dateString);
                 $yearAndMonth = $date->format('Y-m');
+                if(!isset($resultat[$yearAndMonth])){$resultat[$yearAndMonth] = 0 ;}
+                if(!isset($resultat_achat[$yearAndMonth])){$resultat_achat[$yearAndMonth] = 0 ;}
                 $resultat[$yearAndMonth] = $resultat[$yearAndMonth] + $commande->field_total_vente->value ;             
                 $resultat_achat[$yearAndMonth] = $resultat_achat[$yearAndMonth] + $commande->field_total_achat->value ;      
             }
@@ -258,6 +260,7 @@ class ServiceRapport
         $resultat=[];
         // Output the node titles.
         foreach ($nodes as $commande) {
+            if(!isset($resultat[$commande->field_date->value])){$resultat[$commande->field_date->value] = 0 ;}
             $resultat[$commande->field_date->value] = $resultat[$commande->field_date->value] + $commande->field_total_vente->value ;              
         }
         $days = $this->getDaysList();

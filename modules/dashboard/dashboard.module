@@ -1,0 +1,23 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+/**
+ * Implements hook_ENTITY_TYPE_update() for nodes.
+ */
+function dashboard_node_update(EntityInterface $entity) {
+    // Check if the field you're interested in has been updated.
+    $original = $entity->original ;
+    if ($original->get('field_prix_unitaire')->value != $entity->get('field_prix_unitaire')->value) {
+      // Create a new revision.
+    //  $entity->setNewRevision(TRUE);
+    //  $entity->setRevisionCreationTime(REQUEST_TIME);
+    //  $entity->setRevisionUserId(\Drupal::currentUser()->id());
+      // Set a revision log message.
+      //$entity->setRevisionLogMessage('Prix vente est modifie.');
+     // $entity->save();
+     //kint($original->get('field_prix_unitaire')->value);
+     //kint($entity->get('field_prix_unitaire')->value);
+     //die();
+    }
+  }
+  
