@@ -132,8 +132,167 @@ class ServiceRapport
             }
             return ($sum);
        }
+       function totalAchatParMois(){
+        // Get the current date.
+        $current_date = \Drupal::service('datetime.time')->getCurrentTime();
+
+        // Get the first and last day of the current month.
+        $first_day_of_month = strtotime('first day of this month', $current_date);
+
+        $entity_query = \Drupal::entityQuery('node');
+        // Query for article nodes.
+        $nids = $entity_query->condition('type', 'commande')
+        ->condition('field_date',$first_day_of_month, '>=')
+        ->condition('field_status','payed', '=')
+        ->execute();     
+            // Load the nodes.
+        $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
+        $sum = 0 ;
+        // Output the node titles.
+        foreach ($nodes as $commande) {
+            $pv = $commande->field_total_achat->value  ;
+            $sum  = $sum  + floatval($pv) ;
+                        
+        }
+        return ($sum);
+       }
+       function getDaysList(){
+                    // Get the current year and month
+            $currentYear = date('Y');
+            $currentMonth = date('m');
+
+            // Get the number of days in the current month
+            $numDaysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+
+            // Initialize an empty array to store date strings
+            $dateArray = array();
+
+            // Loop through each day of the month
+            for ($day = 1; $day <= $numDaysInMonth; $day++) {
+                // Format the day and month with leading zeros if necessary
+                $formattedDay = str_pad($day, 2, '0', STR_PAD_LEFT);
+                $formattedMonth = str_pad($currentMonth, 2, '0', STR_PAD_LEFT);
+                // Construct the date string
+                $date = $currentYear . '-' . $formattedMonth . '-' . $formattedDay;
+                // Add the date string to the array
+                $dateArray[] = $date;
+            }
+            return  $dateArray;
+       }
+       function getMoisList(){
+                    // Get the current year
+            $currentYear = date('Y');
+
+            // Initialize an empty array to store year-month strings
+            $yearMonthArray = array();
+
+            // Loop through each month of the current year
+            for ($month = 1; $month <= 12; $month++) {
+                // Format the month with leading zero if necessary
+                $formattedMonth = str_pad($month, 2, '0', STR_PAD_LEFT);
+                // Construct the year-month string
+                $yearMonth = $currentYear . '-' . $formattedMonth;
+                // Add the year-month string to the array
+                $yearMonthArray[] = $yearMonth;
+            }
+            return  $yearMonthArray ;
+       }
+       function venteParAnnulle(){
+            $current_year = date('Y');
+            $start_date = new DrupalDateTime("{$current_year}-01-01T00:00:00");
+            $start_timestamp = $start_date->getTimestamp();
+
+            $entity_query = \Drupal::entityQuery('node');
+            // Query for article nodes.
+            $nids = $entity_query->condition('type', 'commande')
+            ->condition('field_status','payed', '=')
+            ->condition('field_date', $start_timestamp, '>=')
+            ->execute();     
+                // Load the nodes.
+            $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
+            $resultat=[];
+            $resultat_achat=[];
+            // Output the node titles.
+            foreach ($nodes as $commande) {
+                $dateString =  $commande->field_date->value ;
+                $date = new \DateTime($dateString);
+                $yearAndMonth = $date->format('Y-m');
+                $resultat[$yearAndMonth] = $resultat[$yearAndMonth] + $commande->field_total_vente->value ;             
+                $resultat_achat[$yearAndMonth] = $resultat_achat[$yearAndMonth] + $commande->field_total_achat->value ;      
+            }
+            $months = $this->getMoisList();
+            $final_vente = [];
+            $final_achat = [];
+            foreach ($months as $mt) {
+                if(!isset($resultat[$mt])){
+                    $final_vente[$mt] = 0 ;
+                }else{
+                    $final_vente[$mt] = $resultat[$mt];
+                }
+                if(!isset($resultat_achat[$mt])){
+                    $final_achat[$mt] = 0 ;
+                }else{
+                    $final_achat[$mt] = $resultat_achat[$mt];
+                }
+            }
+            return [
+                'vente' =>  $final_vente ,
+                'achat' => $final_achat
+            ];
+       }
+       function venteParMois(){
+        // Get the current date.
+        $current_date = \Drupal::service('datetime.time')->getCurrentTime();
+
+        // Get the first and last day of the current month.
+        $first_day_of_month = strtotime('first day of this month', $current_date);
+
+        $entity_query = \Drupal::entityQuery('node');
+        // Query for article nodes.
+        $nids = $entity_query->condition('type', 'commande')
+        ->condition('field_date',$first_day_of_month, '>=')
+        ->condition('field_status','payed', '=')
+        ->execute();     
+            // Load the nodes.
+        $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
+        $resultat=[];
+        // Output the node titles.
+        foreach ($nodes as $commande) {
+            $resultat[$commande->field_date->value] = $resultat[$commande->field_date->value] + $commande->field_total_vente->value ;              
+        }
+        $days = $this->getDaysList();
+        $final_vente = [];
+        foreach ($days as $day) {
+            if(!isset($resultat[$day])){
+                $final_vente[$day] = 0 ;
+            }else{
+                $final_vente[$day] = $resultat[$day];
+            }
+
+        }
+        return $final_vente;
+   }
        function dateProche(){
-        
+                // Get the current timestamp
+            $currentTimestamp = time();
+
+            // Calculate the timestamp for 5 days ago
+            $fiveDaysAgoTimestamp = strtotime('-5 days', $currentTimestamp);
+
+            // Convert the timestamp to a DrupalDateTime object
+            $fiveDaysAgoDateTime = new DrupalDateTime('@' . $fiveDaysAgoTimestamp);
+
+            $entity_query = \Drupal::entityQuery('node');
+            // Query for article nodes.
+            $nids = $entity_query->condition('type', 'stock')
+            ->condition('field_peremption', $fiveDaysAgoDateTime->format('Y-m-d\TH:i:s'), '>=')
+            ->execute();   
+            $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
+            $result = [];
+            foreach ($nodes as $stock) {
+                $result[$stock->id()] = $stock->field_article->entity->label();
+            }
+             return $result ;
        }
     
 

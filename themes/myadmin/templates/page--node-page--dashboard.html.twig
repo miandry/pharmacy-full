@@ -9,7 +9,6 @@
   width: 100px; /* Adjust width as needed */
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
 </style>
 
@@ -20,18 +19,27 @@
       <div class="row border border-2 rounded">
         <h4>TOTAL DES VENTES</h4>
         <h5>{{price(total_vente_par_mois)}} AR</h5>
-        <canvas id="pieChart"></canvas>
+        {# <canvas id="pieChart"></canvas> #}
       </div>
       <div class="row border border-2 rounded mt-5">
         <h4>DATE PROCHE</h4>
-        <h5>10 ARTICLES</h5>
+        <h5>{{dateProche|length}} ARTICLES</h5>
+      </div>
+      <div class="row border border-2 rounded">
+        <h4>TOP VENTE CE MOIS</h4>       
+        <ul class="top_vente">
+        	{% for key,item in top_vente %}
+            <li>{{item.num}} - {{item.name}} </li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
-    <div class="col-md-7">
+
+    <div class="col-md-8">
       <div class="row">
         <div class="col-md-3 border border-2 rounded">
           <h4>TOTAL DES ACHATS</h4>
-          <h5>1.200.000</h5>
+          <h5>{{price(totalAchatParMois)}} AR</h5>
         </div>
         <div class="col-md-3 border border-2 rounded">
           <h4>VALEUR DU STOCK</h4>
@@ -54,22 +62,14 @@
       </div>
     </div>
     <div class="col">
-      <div class="row border border-2 rounded">
-
-        <h4>TOP VENTE CE MOIS</h4>       
-        <ul class="top_vente">
-        	{% for key,item in top_vente %}
-            <li>{{item.num}} - {{item.name}} </li>
-          {% endfor %}
-        </ul>
-      </div>
+ 
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js"></script>
 <script>
-  var myPieChart = new Chart(document.getElementById("pieChart"), {
+   {# var myPieChart = new Chart(document.getElementById("pieChart"), {
     type : 'pie',
     data : {
       labels : [ "Lion", "Horse", "Elephant", "Tiger",
@@ -92,7 +92,7 @@
         }
       }
     }
-  });
+  }); #}
 
   const plugin = {
     id: 'customCanvasBackgroundColor',
@@ -104,7 +104,12 @@
       ctx.fillRect(0, 0, chart.width, chart.height);
       ctx.restore();
     }
-  };
+  }; 
+
+  const vente = [];
+    {% for v in venteParMois %}
+    vente.push({{v}});
+    {% endfor %}
 
   var myMonthChart = new Chart(document.getElementById("monthChart"), {
     type : 'line',
@@ -114,7 +119,7 @@
         label: 'Vente en ariary',
         borderColor: '#fff',
         backgroundColor : '#fff',
-        data : [ 10000, 7500, 15000, 20000, 17500, 25000, 22000, 30000, 17000, 15000, 10000, 20000, 17500, 25000, 27000, 10000, 7500, 15000, 20000, 17500, 25000, 22000, 30000, 17000, 15000, 10000, 20000, 17500, 25000, 27000, 30000],
+        data : vente
       } ]
     },
     options: {
@@ -155,6 +160,15 @@
     plugins: [plugin],
   });
 
+  const venteChart = [];
+  const achatChart = [];
+    {% for v in venteParAnnulle.vente %}
+    venteChart.push({{v}});
+    {% endfor %}
+    {% for a in venteParAnnulle.achat %}
+    achatChart.push({{a}});
+    {% endfor %}
+
   var myBarChart = new Chart(document.getElementById("barChart"), {
     type : 'bar',
     data : {
@@ -164,13 +178,13 @@
           label: 'Vente',
           borderColor: 'rgb(74,71,71)',
           backgroundColor : 'rgba(10,27,184,0.7)',
-          data : [ 10000, 7500, 15000, 20000, 17500, 25000, 22000, 30000, 17000, 15000, 10000, 20000]
+          data : venteChart
         },
         {
           label: 'Achat',
           borderColor: 'rgb(74,71,71)',
           backgroundColor : 'rgba(238,118,57,0.7)',
-          data : [ 17500, 25000, 27000, 10000, 7500, 15000, 20000, 17500, 25000, 22000, 30000, 12000]
+          data : achatChart
         }
       ]
     },
