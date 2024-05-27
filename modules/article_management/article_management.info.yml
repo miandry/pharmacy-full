@@ -1,0 +1,5 @@
+name: 'article_management'
+type: module
+description: 'article_management system'
+core_version_requirement: ^8.8 || ^9
+package: 'Default'

@@ -1,0 +1,9 @@
+article_management.import:
+   path: '/admin/import/article'
+   defaults:
+     _form: '\Drupal\article_management\Form\ImportArticleForm'
+     _title: 'Import List Article'
+   requirements:
+     _permission: 'access administration pages'
+   options:
+     _admin_route: TRUE
