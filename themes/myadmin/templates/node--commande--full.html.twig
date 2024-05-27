@@ -97,12 +97,14 @@
           <td class="fw-bold">Sous total</td>
           <td class="fw-bold">{{ price(total) }} Ar</td>
         </tr>
+        {% if (total_tva > 0) %}
         <tr>
           <td></td>
           <td></td>
           <td class="fw-bold">TVA </td>
           <td class="fw-bold">{{price(total_tva)}} Ar </td>
         </tr>
+        {% endif %}
         {% if n.field_discount %}
         <tr>
           <td></td>
