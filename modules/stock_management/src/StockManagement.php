@@ -15,7 +15,29 @@ class StockManagement
 {
 
      function calculatePrixDeVente($achat , $marge ){
-        return   $achat + ( $achat * $marge)/100  ;
+        return  $achat + ( $achat * $marge)/100  ;
+     }    
+     function addStockNumberOnInsertDefecteux($entity){
+         $node = \Drupal::service('entity_parser.manager')->node_parser($entity);
+         $article =   $node["field_article"]["#object"];
+         $nbrStock = 0;
+         if($article->field_quantite_stock 
+               && $article->field_quantite_stock->value ){
+            $nbrStock = $article->field_quantite_stock->value ;  
+         }                           
+         $article->field_quantite_stock->value = $nbrStock - $node["field_quantite"];
+         $article->save();
+     }
+     function addStockNumberOnDeleteDefecteux($entity){
+         $node = \Drupal::service('entity_parser.manager')->node_parser($entity);
+         $article =   $node["field_article"]["#object"];
+         $nbrStock = 0;
+         if($article->field_quantite_stock 
+               && $article->field_quantite_stock->value ){
+            $nbrStock = $article->field_quantite_stock->value ;  
+         }                           
+         $article->field_quantite_stock->value = $nbrStock + $node["field_quantite"];
+         $article->save();
      }
      function addStockNumberOnInsertCommande($entity){
       $commande = \Drupal::service('entity_parser.manager')->node_parser($entity);
