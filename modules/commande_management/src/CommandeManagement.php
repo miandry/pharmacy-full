@@ -81,6 +81,7 @@ class CommandeManagement
          }
          if(isset($params["discount"]) ){
            $commande->field_discount = $params["discount"];
+           $commande->field_remise = $params["remise"];
            $commande->save();
            $service = \Drupal::service('drupal.helper');
            $service->helper->redirectTo("/commande/".$nid);

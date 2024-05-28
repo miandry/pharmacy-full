@@ -144,15 +144,21 @@
                   <input type="hidden" name="status" value="payed" />
                   <button type="submit" class="btn btn-primary">Confimer payement Recues</button>
                 </form>
-                {% if n.field_remise and not n.field_discount%}
-                <form action="" method="POST" onsubmit="return confirm('Appliquer une remise de {{ n.field_remise }}%?');" class="mx-2">
+                {% if not n.field_discount%}
+                <form action="" method="POST" id="remise-form" class="mx-2">
+                  <input type="radio" class="btn-check" name="remise" id="option5" autocomplete="off" value="5">
+                  <label class="btn btn-outline-secondary" for="option5">Remise 5%</label>
+
+                  <input type="radio" class="btn-check" name="remise" id="option6" autocomplete="off" value="10">
+                  <label class="btn btn-outline-secondary" for="option6">Remise 10%</label>
+
                   <input type="hidden" name="discount" value="1" />
-                  <button type="submit" class="btn btn-primary">Remise</button>
+                  <button type="submit" id="remise-submit" class="btn btn-success" disabled>Appliquer Remise</button>
                 </form>
                 {% endif %}
                 <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment annuler la commande?');" class="mx-2">
                   <input type="hidden" name="status" value="cancel" />
-                  <button type="submit" class="btn btn-secondary">Annuler le Commande </button>
+                  <button type="submit" class="btn btn-secondary">Annuler la Commande </button>
                 </form>
               </div>
             {% endif %}
@@ -171,3 +177,16 @@
     </div>
   </section>
 </div>
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+<script>
+  $('input:radio[name="remise"]').change(
+    function(){
+      if ($(this).is(':checked')) {
+        $('#remise-submit').prop('disabled',false);
+      }
+    });
+  $('#remise-form').submit(function() {
+    var c = confirm("Appliquer une remise de "+$('input:radio[name="remise"]:checked').val()+"% ?");
+    return c;
+  });
+</script>
