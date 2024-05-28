@@ -125,7 +125,8 @@
           <td class="text-primary fs-5 fw-bold">{{ price((total_tva + total)*(1-(n.field_remise)/100)) }} Ar</td>
         </tr>
         {% else %}
-        <tr>
+        <tr id="remise-dynamique"></tr>
+        <tr id="total-dynamique">
           <td></td>
           <td></td>
           <td class="text-primary fs-5 fw-bold">Total</td>
@@ -136,26 +137,23 @@
       </table>
 
       <div class="rounded-5">
+        {% if not n.field_discount %}
+        <label for="remise-select" class="form-label">Remise</label>
+        <select class="form-select w-25" aria-label="Default select example" id="remise-select">
+          <option selected value="">------</option>
+          <option value="5">5%</option>
+          <option value="10">10%</option>
+        </select>
+        {% endif %}
         <div class="d-md-flex justify-content-between mt-4">
           <div class="mt-5 mt-md-0">
             {% if n.field_status != "payed" %}
               <div class="d-flex">
                 <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment confirmer la commande?');" class="mx-2">
                   <input type="hidden" name="status" value="payed" />
-                  <button type="submit" class="btn btn-primary">Confimer payement Recues</button>
+                  <input type="hidden" name="remise" id="remise-input">
+                  <button type="submit" class="btn btn-primary">Confimer payement Reçues</button>
                 </form>
-                {% if not n.field_discount%}
-                <form action="" method="POST" id="remise-form" class="mx-2">
-                  <input type="radio" class="btn-check" name="remise" id="option5" autocomplete="off" value="5">
-                  <label class="btn btn-outline-secondary" for="option5">Remise 5%</label>
-
-                  <input type="radio" class="btn-check" name="remise" id="option6" autocomplete="off" value="10">
-                  <label class="btn btn-outline-secondary" for="option6">Remise 10%</label>
-
-                  <input type="hidden" name="discount" value="1" />
-                  <button type="submit" id="remise-submit" class="btn btn-success" disabled>Appliquer Remise</button>
-                </form>
-                {% endif %}
                 <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment annuler la commande?');" class="mx-2">
                   <input type="hidden" name="status" value="cancel" />
                   <button type="submit" class="btn btn-secondary">Annuler la Commande </button>
@@ -179,6 +177,7 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 <script>
+  var total = {{ total_tva + total }};
   $('input:radio[name="remise"]').change(
     function(){
       if ($(this).is(':checked')) {
@@ -189,4 +188,24 @@
     var c = confirm("Appliquer une remise de "+$('input:radio[name="remise"]:checked').val()+"% ?");
     return c;
   });
+  $('#remise-select').change(function (){
+    $('#remise-input').val($(this).val());
+    if($(this).val()){
+      $('#remise-dynamique').html('<td></td>'+
+        '<td></td>'+
+      '<td class="fw-bold">Remise</td>'+
+      '<td class="fw-bold">'+$(this).val()+'%</td>');
+      $('#total-dynamique').html('<td></td>'+
+        '<td></td>'+
+      '<td class="text-primary fs-5 fw-bold">Total</td>'+
+      '<td class="text-primary fs-5 fw-bold">'+ total*(1- ($(this).val())/100) +' Ar</td>');
+    }else{
+      $('#remise-dynamique').html('');
+
+      $('#total-dynamique').html('<td></td>'+
+        '<td></td>'+
+        '<td class="text-primary fs-5 fw-bold">Total</td>'+
+        '<td class="text-primary fs-5 fw-bold">'+ total+' Ar</td>');
+    }
+  })
 </script>

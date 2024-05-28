@@ -74,6 +74,10 @@ class CommandeManagement
          $commande = Node::load($nid);
          if(isset($params["status"]) ){
            $commande->field_status = $params["status"];
+           if($params['remise']){
+             $commande->field_discount = 1;
+             $commande->field_remise = $params["remise"];
+           }
            $commande->save();
            $service = \Drupal::service('drupal.helper');
            $service->helper->redirectTo("/commande/".$nid);
