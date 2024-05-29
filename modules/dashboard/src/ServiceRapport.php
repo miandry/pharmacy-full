@@ -92,10 +92,13 @@ class ServiceRapport
                 $paras =   $commande["field_articles"];
                 foreach ( $paras as $p) {
                     $para = \Drupal::service('entity_parser.manager')->paragraph_parser($p["id"]);
-                    $id = $para['field_article']["nid"];
-                    $top[$id]['name'] = $para['field_article']['title'];
-                    $top[$id]['num'] =  $top[$id]['num'] + floatval($para["field_quantite"]);   
-                    $sorts[$id] = $top[$id]['num'] ;    
+                    if(isset($para['field_article'])){
+                        $id = $para['field_article']["nid"];
+                        $top[$id]['name'] = $para['field_article']['title'];
+                        $top[$id]['num'] =  $top[$id]['num'] + floatval($para["field_quantite"]);   
+                        $sorts[$id] = $top[$id]['num'] ; 
+                    }
+             
                 }
             }
             uasort($sorts, function($a, $b) {
@@ -293,7 +296,9 @@ class ServiceRapport
             $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
             $result = [];
             foreach ($nodes as $stock) {
-                $result[$stock->id()] = $stock->field_article->entity->label();
+                if($stock->field_article && $stock->field_article->entity){
+                   $result[$stock->id()] = $stock->field_article->entity->label();
+                }
             }
              return $result ;
        }

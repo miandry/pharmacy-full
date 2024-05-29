@@ -158,6 +158,7 @@ class ImportArticleForm extends FormBase {
    */
   public static function processBatch($item, &$context) {
   
+    nodeTitleDoesNotExist($title);
     \Drupal::service('crud')->save('node', 'article',   $item);
     
   }
