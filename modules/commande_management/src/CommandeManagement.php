@@ -32,7 +32,7 @@ class CommandeManagement
             '11' => 'N', // November
             '12' => 'D'  // December
          ];
-          $monthLetter = $months[$currentMonth];
+          $monthLetter = $months[$month];
           return $monthLetter . $year . '-' . $day;
        }
        function saveCommandes(){
