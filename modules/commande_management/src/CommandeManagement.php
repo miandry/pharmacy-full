@@ -14,7 +14,27 @@ use Drupal\node\Entity\Node;
 
 class CommandeManagement
 {
-
+       function generateRef(){
+          $month = date('m'); 
+          $year = date('y'); 
+          $day = date('d'); 
+          $months = [
+            '01' => 'J', // January
+            '02' => 'F', // February
+            '03' => 'M', // March
+            '04' => 'A', // April
+            '05' => 'Y', // May (using 'Y' to distinguish from March)
+            '06' => 'N', // June (using 'N' to distinguish from July)
+            '07' => 'L', // July (using 'L' to distinguish from June)
+            '08' => 'G', // August (using 'G' to distinguish from April)
+            '09' => 'S', // September
+            '10' => 'O', // October
+            '11' => 'N', // November
+            '12' => 'D'  // December
+         ];
+          $monthLetter = $months[$currentMonth];
+          return $monthLetter . $year . '-' . $day;
+       }
        function saveCommandes(){
                // kint(    $arrayData );
             $service = \Drupal::service('drupal.helper');
@@ -22,7 +42,7 @@ class CommandeManagement
             $params = $service->helper->get_parameter();
             if(isset($params["data"])){
                $arrayData = json_decode($params["data"], TRUE);
-               $fields['title'] = "COM-".$nid  ;
+               $fields['title'] = $this->generateRef()  ;
 
                $date_obj = new DrupalDateTime();
                $date = $date_obj->format('Y-m-d');
