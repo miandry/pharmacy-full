@@ -14,6 +14,20 @@ use Drupal\node\Entity\Node;
 
 class CommandeManagement
 {
+       function getCommandeCountToday() {
+          // Get the start and end of the current day.
+          $start_of_day = (new DrupalDateTime('today midnight'))->getTimestamp();
+          $end_of_day = (new DrupalDateTime('tomorrow midnight'))->getTimestamp() - 1;
+          $content_type ='commande';
+          // Create the entity query.
+          $query = \Drupal::entityTypeManager()->getStorage('node')->getQuery();
+          $query->condition('type', $content_type);
+          $query->condition('created', [$start_of_day, $end_of_day], 'BETWEEN');
+        
+          $node_count = $query->count()->execute();
+        
+          return $node_count;
+       }
        function generateRef(){
           $month = date('m'); 
           $year = date('y'); 
@@ -31,9 +45,10 @@ class CommandeManagement
             '10' => 'O', // October
             '11' => 'N', // November
             '12' => 'D'  // December
-         ];
+          ];
           $monthLetter = $months[$month];
-          return $monthLetter . $year . '-' . $day;
+          $count = $this->getCommandeCountToday();
+          return $monthLetter . $year . '-' . $day.$count ;
        }
        function saveCommandes(){
                // kint(    $arrayData );
