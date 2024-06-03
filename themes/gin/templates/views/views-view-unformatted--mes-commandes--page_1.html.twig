@@ -41,7 +41,7 @@ sticky ? 'sticky-enabled',
 'footable footable-1 breakpoint breakpoint-lg'
 ]
 %}
-
+{{ attach_library('myadmin/icon_bootstrap') }}
 {{ attach_library('myadmin/bootstrap_css') }}
 
 
@@ -91,7 +91,6 @@ sticky ? 'sticky-enabled',
 
 {{ attach_library('myadmin/commande_js') }}
 
-
 		<table id="table1"  
         data-detail-view="true" 
         data-detail-formatter="detailFormatter" 
@@ -117,22 +116,55 @@ sticky ? 'sticky-enabled',
 							[
 				            {% for item in rows %}
                             {% set com = item.content["#row"]._entity %}
-									{% set n = node_parser(com) %}        
+									{% set n = commande_parser(com) %}   
+                  {% set at = n.field_articles | json_encode | raw  %}     
 				                           	{
 				                                "id": "{{n.nid}}",
 				                                "ref": "{{n.title}}",
-											    "date": "{{n.field_date}}",
+											     "date": "{{n.field_date}}",
                                                 "client": "{{n.field_client.title}}",
                                                 "status": "{{n.field_status}}",
                                                 "status": "{{n.field_status}}",
 				                                "price": "{{n.field_total_vente}}",
-				                                "total_achat": "{{n.field_total_achat}}"
+				                                "total_achat": "{{n.field_total_achat}}",
+                                        "articles": "{{at}}"
 				                            },
 				                   {% endfor %}
 							]
-     function priceValueFormatter(value) {
+       function priceValueFormatter(value) {
         return new Intl.NumberFormat('en-DE').format(value) ;
-    }
+      }
+      function detailFormatter(index, row) {
+            var html = [];
+               html.push("<table id=details>");
+                html.push("<tr><th>Articles</th><th>Qte</th><th>Prix unitaire</th><th>Montant (AR)</th></tr>");
+                console.log( row);
+                let encodedString = row.articles ;
+                                // Decode HTML entities
+                const decodedString = encodedString.replace(/&quot;/g, '"');
+                let total = 0 ;
+                // Parse the JSON string
+                const jsonObject = JSON.parse(decodedString);
+                for (const key in jsonObject) {
+                    if (jsonObject.hasOwnProperty(key)) {
+                        const el = (jsonObject[key]);
+                        console.log(el);
+                        const qte =  el.field_quantite ;
+                        var item =  el.field_article ;
+                        var price =  el.price_unitaire ;
+                        total = total + qte*price ;
+                        html.push("<tr><td>"+item  + " ( "+ el.id +" ) </td><td> " + qte + " </td><td> " + priceValueFormatter(price) + "  </td><td> " + priceValueFormatter(qte*price)+ "  <td></tr>") ;
+                    }
+                }
+                 html.push("<tr><td></td><td></td> <td><b>Total :</b></td><td><b>"+priceValueFormatter(total)+" AR </b></td></tr>");
+                   html.push("</table>");
+
+       // console.log( JSON.parse(row.articles));
+    
+         html.push("<a></a>");
+        return html.join('');
+      }        
+
      function priceFormatter(data) {
         
         var field = this.field
@@ -188,10 +220,7 @@ sticky ? 'sticky-enabled',
                                 ].join('')
        }
 
-        function detailFormatter(index, row) {
-          var html = [];
-          return "<h1>HELLO</h1>";
-        }
+     
   
 
 
