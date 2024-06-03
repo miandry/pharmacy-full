@@ -24,3 +24,30 @@ function commande_management_management_help($route_name, RouteMatchInterface $r
     }
 }
 
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function commande_management_form_alter(&$form, FormStateInterface $form_state, $form_id)
+{
+      // Get the current path.
+  $current_path = \Drupal::service('path.current')->getPath();
+  $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+  if ($current_path_alias == '/admin/commandes' && $form_id == "views_exposed_form") {
+      $form['field_date_value']['#required'] = true;    
+  }
+
+ 
+}
+use \Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_views_pre_view(().
+ */
+function commande_management_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+  if ($view->id() == 'mes_commandes' && $display_id == 'page_1') {
+    $filters = $view->getDisplay()->getOption('filters'); 
+    $filters['field_date_value']['value']['value'] = date('Y')."-01-01";
+    $view->display_handler->overrideOption('filters', $filters);
+  }
+}
+

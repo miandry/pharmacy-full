@@ -87,6 +87,18 @@ sticky ? 'sticky-enabled',
     background: #d2322d;
 }
 </style>
+
+{{ attach_library('myadmin/commande_js') }}
+		<table id="table1" data-search="true"  data-search-align="left" data-pagination="true">
+						<thead>
+							<tr>
+								<th data-field="id">ID</th>
+								<th data-field="name">name</th>
+								<th data-field="price">Prix unitaire</th>
+							</tr>
+						</thead>
+	  </table>
+
 <table{{ attributes.addClass(classes) }}>
   {% if caption_needed %}
     <caption>
@@ -173,5 +185,25 @@ sticky ? 'sticky-enabled',
     {% endfor %}
   </tbody>
 </table>
+<script>
+   	  var data = 
+							[
+				            {% for item in rows %}
+                    {{kint(item.columns.nid.content|first.field_output["#markup"])}}
+                    
+                          {% set nid = item.columns.nid %}
+													{% set n = node_parser(nid) %}
+                          {{kint(n)}}{{die()}}
 
- 
+				                           	{
+				                                "id": "{{n.nid}}",
+				                                "name": "{{n.title}} <br/> <span class=dci>{{n.field_dci.title}}</span>",
+											    "unite": "{{n.field_stock_unitaire.title}}",
+				                                "price": "{{n.field_prix_unitaire}}",
+				                                "qte": "{{n.field_quantite_stock}}"
+				                            },
+				             {% endfor %}
+							]
+    ]
+
+</script>
