@@ -71,12 +71,14 @@ class StockManagement
      }
      function updateStockNumberOnDeleteStock($entity){
         $article = $entity->field_article->entity;
+        $nombre_par_unite = $article->field_nombre_par_unite->value ;   
+        $stock_par_unite = $entity->field_quantite->value * $nombre_par_unite  ;
         $nbrStock = 0;
         if($article->field_quantite_stock 
             && $article->field_quantite_stock->value ){
             $nbrStock = $article->field_quantite_stock->value ;
         }
-        $article->field_quantite_stock->value = $nbrStock - $entity->field_quantite->value;
+        $article->field_quantite_stock->value = $nbrStock - $stock_par_unite;
         return $article->save();
      }
      function executeStockInsert($entity){
@@ -88,14 +90,27 @@ class StockManagement
             && $article->field_quantite_stock->value ){
             $nbrStock = $article->field_quantite_stock->value ;
         }
-        $article->field_quantite_stock->value = $nbrStock + $entity->field_quantite->value;
+        $nombre_par_unite = $article->field_nombre_par_unite->value ;   
+        $qte_stock_par_boite  = $entity->field_quantite->value ;
+
+        $qte_stock_par_unite = floatval($qte_stock_par_boite) * $nombre_par_unite  ;    ;
+        $article->field_quantite_stock->value = $nbrStock +  $qte_stock_par_unite;
+
+        // prix achat par pieces
+
+ 
+
+        $achat_but = $entity->field_prix_achat_brut->value;
+
+        $achat =  (floatval($achat_but)/$qte_stock_par_boite)/$nombre_par_unite ;
+        $marge = $article->field_marge->value ;
+        $entity->field_prix_d_achat->value =  $achat ;
 
         // prix vente
-        $achat = $entity->field_prix_d_achat->value;
-        $marge = $article->field_marge->value ;
-        $pv  =   $this->calculatePrixDeVente($achat , $marge )  ;
+        $pv  =  $this->calculatePrixDeVente($achat , $marge )  ;
 
         // update article
+      
         $article->field_prix_d_achat->value =  $achat ;
         $prix_v_actuelle = $article->field_prix_unitaire->value ;
         if( $prix_v_actuelle < $pv){
@@ -107,11 +122,12 @@ class StockManagement
         return  $entity ;
      }
      function executeComputedBenefice($entity){
-           $achat = $entity->field_prix_d_achat->value;
-           $article = $entity->field_article->entity;
-           $marge = $article->field_marge->value ;
-           $pv  =   $this->calculatePrixDeVente($achat , $marge)  ;
-           return $pv - $achat ; 
+         //   $achat = $entity->field_prix_d_achat->value;
+         //   $article = $entity->field_article->entity;
+         //   $marge = $article->field_marge->value ;
+         //   $pv  =   $this->calculatePrixDeVente($achat , $marge)  ;
+         //   return $pv - $achat ; 
+         return false ;
      }
 
      
