@@ -1,6 +1,4 @@
-<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-<link rel="stylesheet" href="https://demos.creative-tim.com/material-dashboard/assets/css/material-dashboard.min.css?v=3.1.0">
+{{ attach_library('myadmin/lib_dashboard') }}
 <style>
 .top_vente {
     font-size: 12px;
@@ -114,10 +112,6 @@
               <h4 class="mb-0">{{rupture_stock}} articles</h4>
             </div>
           </div>
-          {# <hr class="dark horizontal my-0">
-          <div class="card-footer p-3">
-            <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span>than yesterday</p>
-          </div> #}
         </div>
       </div>
     </div>
@@ -127,7 +121,6 @@
           <h6>Top vente ce mois</h6>
           <p class="text-sm">
             <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
-            {# <span class="font-weight-bold">24%</span> this month #}
           </p>
         </div>
         <div class="card-body p-3">
@@ -138,7 +131,7 @@
                     <i class="material-icons text-danger text-gradient">code</i>
                   </span>
                 <div class="timeline-content">
-                  <h6 class="text-dark text-sm font-weight-bold mb-0">{{item.num}} - {{item.name}}</h6>
+                  <h6 class="text-dark text-sm font-weight-bold mb-0">{{item.name}} a vendu {{item.num}} </h6>
                 </div>
               </div>
             {% endfor %}
@@ -158,13 +151,8 @@
           </div>
         </div>
         <div class="card-body">
-          <h6 class="mb-0 ">Website Views</h6>
-          <p class="text-sm ">Last Campaign Performance</p>
-          <hr class="dark horizontal">
-          <div class="d-flex ">
-            <i class="material-icons text-sm my-auto me-1">schedule</i>
-            <p class="mb-0 text-sm"> campaign sent 2 days ago </p>
-          </div>
+          <h6 class="mb-0 ">Annulle historique de vente et achat</h6>
+          <p class="text-sm ">Comparer les achat et ventes </p>
         </div>
       </div>
     </div>
@@ -178,13 +166,8 @@
           </div>
         </div>
         <div class="card-body">
-          <h6 class="mb-0 "> Daily Sales </h6>
-          <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) increase in today sales. </p>
-          <hr class="dark horizontal">
-          <div class="d-flex ">
-            <i class="material-icons text-sm my-auto me-1">schedule</i>
-            <p class="mb-0 text-sm"> updated 4 min ago </p>
-          </div>
+          <h6 class="mb-0 "> Ventes quotidiennes </h6>
+          <p class="text-sm "> suivre l'evolution de votre commande. </p>
         </div>
       </div>
     </div>
@@ -245,32 +228,8 @@
   </div>
 </div>#}
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js"></script>
 <script>
-   {# var myPieChart = new Chart(document.getElementById("pieChart"), {
-    type : 'pie',
-    data : {
-      labels : [ "Lion", "Horse", "Elephant", "Tiger",
-        "Jaguar" ],
-      datasets : [ {
-        backgroundColor : [ "#51EAEA", "#FCDDB0",
-          "#FF9D76", "#FB3569", "#82CD47" ],
-        data : [ 418, 263, 434, 586, 332 ]
-      } ]
-    },
-    options : {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'bottom',
-        },
-        title: {
-          display: true,
-          text: 'Chart.js Pie Chart'
-        }
-      }
-    }
-  }); #}
+ 
 
   const plugin = {
     id: 'customCanvasBackgroundColor',
@@ -338,6 +297,10 @@
     plugins: [plugin],
   });
 
+
+</script>
+<script>
+
   const venteChart = [];
   const achatChart = [];
     {% for v in venteParAnnulle.vente %}
@@ -347,80 +310,33 @@
     achatChart.push({{a}});
     {% endfor %}
 
-  var myBarChart = new Chart(document.getElementById("barChart"), {
-    type : 'bar',
-    data : {
-      labels : ['JAN','FEV','MAR','AVR','MAI','JUN','JUI','AOU','SEP','OCT','NOV','DEC'],
-      datasets : [
-        {
-          label: 'Vente',
-          borderColor: 'rgb(74,71,71)',
-          backgroundColor : 'rgba(10,27,184,0.7)',
-          data : venteChart
-        },
-        {
-          label: 'Achat',
-          borderColor: 'rgb(74,71,71)',
-          backgroundColor : 'rgba(238,118,57,0.7)',
-          data : achatChart
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'bottom',
-        },
-        title: {
-          display: true,
-          text: "Evolution des ventes et achats annuelles",
-          color: '#fff',
-          size: 24
-        },
-        customCanvasBackgroundColor: {
-          color: 'rgb(35,35,35)',
-        }
-      },
-      scales:{
-        y:{
-          border: {
-            display: false
-          },
-          grid: {
-            color: '#fff'
-          },
-          ticks: {
-            color: '#fff'
-          }
-        },
-        x:{
-          ticks: {
-            color: '#fff'
-          }
-        }
-      },
-    },
-    plugins: [plugin],
-  });
-</script>
-<script>
   var ctx = document.getElementById("chart-bars").getContext("2d");
 
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: ["M", "T", "W", "T", "F", "S", "S"],
+      labels: ['JAN','FEV','MAR','AVR','MAI','JUN','JUI','AOU','SEP','OCT','NOV','DEC'],
       datasets: [{
-        label: "Sales",
+        label: "Ventes",
         tension: 0.4,
         borderWidth: 0,
         borderRadius: 4,
         borderSkipped: false,
         backgroundColor: "rgba(255, 255, 255, .8)",
-        data: [50, 20, 10, 22, 50, 10, 40],
+        data: venteChart,
         maxBarThickness: 6
-      }, ],
+      },
+       {
+          label: 'Achat',
+          tension: 0.4,
+          borderWidth: 0,
+          borderRadius: 4,
+          borderSkipped: false,
+          backgroundColor : 'rgba(26,115,232,1)',
+          data: achatChart,
+          maxBarThickness: 6
+        }
+       ],
     },
     options: {
       responsive: true,
@@ -485,15 +401,17 @@
     },
   });
 
-
   var ctx2 = document.getElementById("chart-line").getContext("2d");
-
+  const vente1 = [];
+    {% for v in venteParMois %}
+    vente1.push({{v}});
+   {% endfor %}
   new Chart(ctx2, {
     type: "line",
     data: {
-      labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      labels : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
       datasets: [{
-        label: "Mobile apps",
+        label: "Vente par jour",
         tension: 0,
         borderWidth: 0,
         pointRadius: 5,
@@ -504,7 +422,7 @@
         borderWidth: 4,
         backgroundColor: "transparent",
         fill: true,
-        data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
+        data: vente,
         maxBarThickness: 6
 
       }],
@@ -569,86 +487,4 @@
     },
   });
 
-  var ctx3 = document.getElementById("chart-line-tasks").getContext("2d");
-
-  new Chart(ctx3, {
-    type: "line",
-    data: {
-      labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-      datasets: [{
-        label: "Mobile apps",
-        tension: 0,
-        borderWidth: 0,
-        pointRadius: 5,
-        pointBackgroundColor: "rgba(255, 255, 255, .8)",
-        pointBorderColor: "transparent",
-        borderColor: "rgba(255, 255, 255, .8)",
-        borderWidth: 4,
-        backgroundColor: "transparent",
-        fill: true,
-        data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-        maxBarThickness: 6
-
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false,
-        }
-      },
-      interaction: {
-        intersect: false,
-        mode: 'index',
-      },
-      scales: {
-        y: {
-          grid: {
-            drawBorder: false,
-            display: true,
-            drawOnChartArea: true,
-            drawTicks: false,
-            borderDash: [5, 5],
-            color: 'rgba(255, 255, 255, .2)'
-          },
-          ticks: {
-            display: true,
-            padding: 10,
-            color: '#f8f9fa',
-            font: {
-              size: 14,
-              weight: 300,
-              family: "Roboto",
-              style: 'normal',
-              lineHeight: 2
-            },
-          }
-        },
-        x: {
-          grid: {
-            drawBorder: false,
-            display: false,
-            drawOnChartArea: false,
-            drawTicks: false,
-            borderDash: [5, 5]
-          },
-          ticks: {
-            display: true,
-            color: '#f8f9fa',
-            padding: 10,
-            font: {
-              size: 14,
-              weight: 300,
-              family: "Roboto",
-              style: 'normal',
-              lineHeight: 2
-            },
-          }
-        },
-      },
-    },
-  });
 </script>
-<script src="https://demos.creative-tim.com/material-dashboard/assets/js/material-dashboard.min.js?v=3.1.0"></script>

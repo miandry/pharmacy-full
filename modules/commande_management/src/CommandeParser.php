@@ -36,13 +36,16 @@ class CommandeParser extends EntityParser
                           if(isset($el['field_article']["#object"])){
                             $article = $el['field_article']["#object"];
                             $price = is_object($article)?$article->field_prix_unitaire->value : 0 ;
-                          }              
-                          $item[]=[
-                           'id' => $el['field_article']['nid'],
-                           'field_quantite' => $el['field_quantite'],
-                           'field_article' => $el['field_article']['title'],  
-                           'price_unitaire' =>   $price
-                          ];
+                          } 
+                          if(isset($el['field_article']['nid'])){
+                            $item[]=[
+                                'id' => $el['field_article']['nid'],
+                                'field_quantite' => $el['field_quantite'],
+                                'field_article' => $el['field_article']['title'],  
+                                'price_unitaire' =>   $price
+                               ];
+                          }             
+                    
                   }
               }
               $is_multple = $entity->get($field)->getFieldDefinition()->getFieldStorageDefinition()->isMultiple();

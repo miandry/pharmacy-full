@@ -6,8 +6,8 @@ use Drupal\Core\Entity\EntityInterface;
  */
 function dashboard_node_update(EntityInterface $entity) {
     // Check if the field you're interested in has been updated.
-    $original = $entity->original ;
-    if ($original->get('field_prix_unitaire')->value != $entity->get('field_prix_unitaire')->value) {
+    //$original = $entity->original ;
+    //if ($original->get('field_prix_unitaire')->value != $entity->get('field_prix_unitaire')->value) {
       // Create a new revision.
     //  $entity->setNewRevision(TRUE);
     //  $entity->setRevisionCreationTime(REQUEST_TIME);
@@ -18,6 +18,6 @@ function dashboard_node_update(EntityInterface $entity) {
      //kint($original->get('field_prix_unitaire')->value);
      //kint($entity->get('field_prix_unitaire')->value);
      //die();
-    }
+   //}
   }
   
