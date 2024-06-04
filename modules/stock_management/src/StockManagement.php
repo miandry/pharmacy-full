@@ -105,7 +105,7 @@ class StockManagement
         $achat =  (floatval($achat_but)/$qte_stock_par_boite)/$nombre_par_unite ;
         $marge = $article->field_marge->value ;
         $entity->field_prix_d_achat->value =  $achat ;
-
+        $entity->field_quantite_unitaire->value =   $qte_stock_par_unite;
         // prix vente
         $pv  =  $this->calculatePrixDeVente($achat , $marge )  ;
 
