@@ -95,6 +95,9 @@ class ServiceRapport
                     if(isset($para['field_article'])){
                         $id = $para['field_article']["nid"];
                         $top[$id]['name'] = $para['field_article']['title'];
+                        if(!isset($top[$id]['num'])){
+                            $top[$id]['num'] = 0 ;
+                        }
                         $top[$id]['num'] =  $top[$id]['num'] + floatval($para["field_quantite"]);   
                         $sorts[$id] = $top[$id]['num'] ; 
                     }
