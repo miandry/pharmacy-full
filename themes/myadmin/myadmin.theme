@@ -49,4 +49,8 @@ function myadmin_preprocess_page(&$variables) {
     $variables['#cache']['max-age'] = 0;
     //die("ok");
   }
+  if ($current_path_alias == '/stockbas') {
+    $service = \Drupal::service('dashboard.manager');
+    $variables["getStockBas"] =     $service->getStockBas();
+  }
 }

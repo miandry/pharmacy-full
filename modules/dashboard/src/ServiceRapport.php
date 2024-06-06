@@ -36,6 +36,28 @@ class ServiceRapport
             }
             return ($sum);
        }
+       function getStockBas(){
+        $entity_query = \Drupal::entityQuery('node');
+        $nids = $entity_query->condition('type', 'article')
+        ->execute();
+        $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
+        $stockbas=[] ;
+        foreach ($nodes as $article) {
+           $stock =  $article->field_quantite_stock->value ;
+           if($article->field_limite_stock){
+                $min =  $article->field_limite_stock->value ;
+                if( 0 < $stock &&  $stock <= $min){
+                    $t = \Drupal::service('entity_parser.manager')->node_parser($article) ;
+                    $stockbas[] = [
+                        'id' => $t['nid'],
+                        'name' => $t['title'],
+                        'stock' => $t['field_quantite_stock']
+                    ];
+                }
+           }
+        }
+        return $stockbas;
+       }
        function stockBas($min){
         $entity_query = \Drupal::entityQuery('node');
         $nids = $entity_query->condition('type', 'article')
@@ -44,8 +66,11 @@ class ServiceRapport
         $stockbas=[] ;
         foreach ($nodes as $article) {
            $stock =  $article->field_quantite_stock->value ;
-           if( 0 < $stock &&  $stock <= $min){
-            $stockbas[] = $article ;
+           if($article->field_limite_stock){
+                $min =  $article->field_limite_stock->value ;
+                if( 0 < $stock &&  $stock <= $min){
+                $stockbas[] = $article ;
+                }
            }
         }
         return sizeof($stockbas);
