@@ -15,6 +15,9 @@ function myadmin_preprocess_html(&$variables) {
         $variables['saved'] = $saved ;
       }
   }
+  if ($current_path_alias == '/invoice') {
+    $variables['#cache']['max-age'] = 0;
+  }
   if (strpos($current_path_alias, "/commande/") !== false) {
     $variables['#cache']['max-age'] = 0;
     $service = \Drupal::service('commande_management.manager');

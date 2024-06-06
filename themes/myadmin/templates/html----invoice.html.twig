@@ -630,7 +630,8 @@ hr {
 
 {% set params = get_parameter() %}
 {% set n = (node_parser(params.id)) %}
-{% set client = node_parser(.nid) %}
+{% set client = node_parser(n.field_client.nid) %}
+
 
 
                                                                                                                                                                                   
@@ -641,8 +642,9 @@ hr {
   <header class="header--invoice" style="height: auto !important;">
   <div class="row align-items-left">
     <div class="col-sm-12 text-left text-left mb-3 mb-sm-0">
-      <h1>STAYDIRECT</h1>
-      <h4 class="text-7 mb-0">FACTURE #INV-349 </h4>
+      <img style="float:right" src="/themes/myadmin/images/logo.jpg" width="150"> 
+      <h1>PHARMACIE RABE</h1>
+      <h4 class="text-7 mb-0">FACTURE #INV-{{n.nid}} </h4>
     </div>
   </div>
   <hr>
@@ -650,32 +652,21 @@ hr {
   
   <!-- Main Content -->
   <main>
-  
-  <div class="row">
-    <div class="col-sm-6">
-      <span><strong>Facturation date :</strong> 03/29/2024</span><br>
-      <span><strong>Booking date :</strong> 03/26/2024</span>
-    </div>
-    <div class="col-sm-6 text-sm-end"> 
-    
-                    <div class="invoice-status">
-                                           <span class="unpaid">UNPAYED</span>
-                                        </div> 
-  </div>
-	  
-  </div>
-  <hr>
   <div class="row">
     <div class="col-sm-6 text-sm-end order-sm-1"> 
       <strong></strong>
   
     </div>
-    <div class="col-sm-6 order-sm-0"> <strong>Invoiced To:</strong>
+    <div class="col-sm-6 order-sm-0"> 
+    <span><strong>Antananarivo, le </strong> {{n.field_date}}</span> <br>
+    {% if(client.title != "INCONNUE") %}
+    <strong>Facturé à :</strong>
       <address>
-       <br>
-      faniry12@yahoo.fr<br>
-      <br>
+      {{client.title}} <br/>
+      {{client.field_phone}} 
       </address>
+      {% else %} <br/>
+      {% endif %}
     </div>
   </div>
 	
@@ -690,27 +681,54 @@ hr {
             </tr>
           </thead>
           <tbody>
+          {% set total = 0 %}
+          {% set total_tva  = 0 %}
+          {% set remise  = 0 %}
+           {% for article in n.field_articles %}
+          {% set a = node_parser(article.field_article.nid) %}
+          {% set montant = a.field_prix_unitaire * article.field_quantite %}
+
             <tr>
               <td colspan="4" class="col-10 text-1">
-                  <h5>2020 Ram Promaster Custom Camper</h5>Strip on 2024-04-05 to 2024-04-13<br/><b>Security Deposit</b>    500$ <br><b>Chair</b>  5$ x 1 unit <br><b>Insurance ( Normal ) </b>   10$ <br>
+                  <h5>{{a.title}} </h5>
+                  <b>{{price(a.field_prix_unitaire)}} Ar x  {{article.field_quantite}} {{a.field_stock_unitaire.title}}</b>   {% if (a.field_tva == 1) %}<i><span class="d-print-none"> ( Avec TVA ) </span></i>{% endif %}
               </td>
-              <td class="text-end">12361.63</td>
+              <td class="text-end">{{price(montant)}} </td>
             </tr>
+                {% if (a.field_tva == 1) %}
+                  {% set total_tva = total_tva + montant*0.20 %}
+                {% endif %}
+               {% set total = total +  montant %}
+              {% endfor %}
           </tbody>
 
           <tfoot class="card-footer">
             <tr>
-              <td colspan="4" class="text-end"><strong>Sub Total:</strong></td>
-              <td class="text-end">12361.63$</td>
+              <td colspan="4" class="text-end"><strong>Sous Total:</strong></td>
+              <td class="text-end">{{price(total)}} Ar</td>
             </tr>
-            <tr>
-              <td colspan="4" class="text-end"><strong>Tax ( 9.25 % ):</strong></td>
-              <td class="text-end">1143.45</td>
-            </tr>
-            <tr>
+            {% if (total_tva > 0) %}
+              <tr>
+                <td colspan="4" class="text-end"><strong>TVA ( 20% )</strong></td>
+                <td class="text-end">{{price(total_tva)}} Ar</td>
+              </tr>
+            {% endif %} 
+            {% if n.field_remise %}
+              <tr>
+                <td colspan="4" class="text-end"><strong>Remise</strong></td>
+                <td class="text-end">{{ n.field_remise }} %</td>
+              </tr>
+              <tr>
+                <td colspan="4" class="text-end border-bottom-0"><strong>Total:</strong></td>
+                <td class="text-end border-bottom-0">{{ price((total_tva + total)*(1-(n.field_remise)/100)) }} Ar</td>
+              </tr>
+           {% else %} 
+              <tr>
               <td colspan="4" class="text-end border-bottom-0"><strong>Total:</strong></td>
-              <td class="text-end border-bottom-0">13505.08</td>
-            </tr>
+              <td class="text-end border-bottom-0">{{price(total + total_tva)}} Ar</td>
+              </tr> 
+           {% endif %} 
+         
           </tfoot>
 
         </table>
@@ -720,7 +738,8 @@ hr {
   </main>
   <!-- Footer -->
   <footer class="text-center mt-4">
-  <div class="btn-group btn-group-sm d-print-none"> <a href="javascript:window.print()" class="btn btn-light border text-black-50 shadow-none"><i class="fa fa-print"></i> Download </a></div>
+  <div class="btn-group btn-group-sm d-print-none"> 
+  <a href="javascript:window.print()" class="btn btn-light border text-black-50 shadow-none"><i class="fa fa-print"></i> Download </a></div>
   </footer>
 </div>
 

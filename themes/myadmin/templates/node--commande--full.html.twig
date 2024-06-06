@@ -1,5 +1,6 @@
 {% set n = (node_parser(node)) %}
 {% set client = node_parser(n.field_client.nid) %}
+{% set status = n.field_status %}
 {#{{kint(n.field_articles[0])}} {{die()}}#}
 {% set params = get_parameter() %}
 {{ attach_library('myadmin/bootstrap_css') }}
@@ -105,7 +106,7 @@
           <td class="fw-bold">{{price(total_tva)}} Ar </td>
         </tr>
         {% endif %}
-        {% if n.field_discount %}
+        {% if n.field_remise %}
         <tr>
           <td></td>
           <td></td>
@@ -137,7 +138,7 @@
       </table>
 
       <div class="rounded-5">
-        {% if not n.field_discount %}
+        {% if n.field_status != "payed" %}
         <label for="remise-select" class="form-label">Remise</label>
         <select class="form-select w-25" aria-label="Default select example" id="remise-select">
           <option selected value="">------</option>
