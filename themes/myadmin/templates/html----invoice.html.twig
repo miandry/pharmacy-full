@@ -1,10 +1,16 @@
+{% set params = get_parameter() %}
+{% set n = (node_parser(params.id)) %}
+{% set client = node_parser(n.field_client.nid) %}
+
+
+
 <!DOCTYPE html>
 <html lang="en"><head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title></title>
+<title>Facture-{{n.title}}</title>
 <meta name="author" content="harnishdesign.net">
 
 <!-- Stylesheet
@@ -627,11 +633,6 @@ hr {
 }
 </style>
 </head>
-
-{% set params = get_parameter() %}
-{% set n = (node_parser(params.id)) %}
-{% set client = node_parser(n.field_client.nid) %}
-
 
 
                                                                                                                                                                                   

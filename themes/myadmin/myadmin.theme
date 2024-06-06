@@ -15,7 +15,7 @@ function myadmin_preprocess_html(&$variables) {
         $variables['saved'] = $saved ;
       }
   }
-  if ($current_path_alias == '/invoice') {
+  if ($current_path_alias == '/invoice' || $current_path_alias == '/ticket') {
     $variables['#cache']['max-age'] = 0;
   }
   if (strpos($current_path_alias, "/commande/") !== false) {

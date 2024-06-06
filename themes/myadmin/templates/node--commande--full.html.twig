@@ -163,8 +163,8 @@
             {% endif %}
             {% if n.field_status == "payed" %}
                 <input type="hidden" name="telecharger" value="1" />
-                <a href="#" class="btn btn-primary">Télécharger ticket de caisse</a>
-                <a href="/invoice?id={{n.nid}}" class="btn btn-primary">Télécharger la facture large</a>
+                <a target="_blank" href="/ticket?id={{n.nid}}" class="btn btn-primary">Télécharger ticket de caisse</a>
+                <a target="_blank" href="/invoice?id={{n.nid}}" class="btn btn-primary">Télécharger la facture </a>
             {% endif %}
           </div>
           <div class="text-md-end mt-5 mt-md-0">
