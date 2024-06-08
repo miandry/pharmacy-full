@@ -117,7 +117,7 @@ class ServiceRapport
                 $paras =   $commande["field_articles"];
                 foreach ( $paras as $p) {
                     $para = \Drupal::service('entity_parser.manager')->paragraph_parser($p["id"]);
-                    if(isset($para['field_article'])){
+                    if(isset($para['field_article']) && isset($para['field_article']["nid"])){
                         $id = $para['field_article']["nid"];
                         $top[$id]['name'] = $para['field_article']['title'];
                         if(!isset($top[$id]['num'])){

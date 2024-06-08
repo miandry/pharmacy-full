@@ -25,8 +25,7 @@
 			.body-invoice {
 				background: #e7e9ed;
 				color: #535b61;
-				font-family: "Poppins", sans-serif;
-				font-size: 14px;
+				font-size: 20px;
 				line-height: 22px;
 			}
 
@@ -55,6 +54,7 @@
 			}
 			.items p {
 				margin: 5px 0;
+				font-size:20px;
 			}
 			.items .item {
 				display: flex;
@@ -68,7 +68,7 @@
 			}
 			.invoice-container {
 				margin: 15px auto;
-				padding: 70px;
+				padding: 0px;
 				width: 148mm;
 				background-color: #fff;
 				border: 1px solid #ccc;
@@ -101,7 +101,7 @@
 			<article>
 				<div class="receipt">
 					<div class="header">
-						<h1>PHARMACIE RABE</h1>
+						<h1><b>PHARMACIE RABE</b></h1>
 						<p>Cité ITAOSY</p>
                         <p>REFERENCE : {{n.title}}</p>	
 					</div>
@@ -124,8 +124,8 @@
          {% if n.field_remise %}
          			<div class="total">
 						<p>
-							<strong>Total (Avec remise {{n.field_remise|number_format}}%):</strong>
-							{{ price((total)*(1-(n.field_remise)/100)) }} Ar
+							Total (Avec remise {{n.field_remise|number_format}}%):
+							<strong>{{ price((total)*(1-(n.field_remise)/100)) }} Ar </strong>
                         </p>
 					</div>
          {% else %}

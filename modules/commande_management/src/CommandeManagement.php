@@ -80,7 +80,6 @@ class CommandeManagement
                }
                $fields['field_total_achat'] =  $pa_total;
                $fields['field_articles'] = $items;
-               kint( $fields);die();
                $com_new = \Drupal::service('crud')->save('node', 'commande', $fields);
                if(is_object($com_new )){
                   $service = \Drupal::service('drupal.helper');

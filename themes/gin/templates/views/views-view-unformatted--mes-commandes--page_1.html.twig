@@ -133,7 +133,7 @@ sticky ? 'sticky-enabled',
 							]
               console.log(data);
        function priceValueFormatter(value) {
-        return new Intl.NumberFormat('en-DE').format(value) ;
+        return new Intl.NumberFormat('fr-FR').format(value) ;
       }
       function detailFormatter(index, row) {
             var html = [];
@@ -174,7 +174,7 @@ sticky ? 'sticky-enabled',
         }).reduce(function (sum, i) {
             return sum + i
         }, 0)
-        return new Intl.NumberFormat('en-DE').format(my_total)+ " AR" ;
+        return new Intl.NumberFormat('fr-FR').format(my_total)+ " AR" ;
     }
     function total_achatFormatter(data) {
         var field = this.field
@@ -183,7 +183,7 @@ sticky ? 'sticky-enabled',
         }).reduce(function (sum, i) {
             return sum + i
         }, 0)
-        return new Intl.NumberFormat('en-DE').format(my_total)+ " AR";
+        return new Intl.NumberFormat('fr-FR').format(my_total)+ " AR";
     }
     function dateFormatter(value) {
         const date = new Date(value);
