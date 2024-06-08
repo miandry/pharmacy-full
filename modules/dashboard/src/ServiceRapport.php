@@ -139,17 +139,16 @@ class ServiceRapport
 
             return  $sort_final;   
        }
-       function totalVenteParMois(){
-            // Get the current date.
-            $current_date = \Drupal::service('datetime.time')->getCurrentTime();
-
-            // Get the first and last day of the current month.
-            $first_day_of_month = strtotime('first day of this month', $current_date);
+       function totalVenteParJour(){
+           $current_date = new \DateTime();
+           $current_day = $current_date->format('Y-m-d');
+   
+      
 
             $entity_query = \Drupal::entityQuery('node');
             // Query for article nodes.
             $nids = $entity_query->condition('type', 'commande')
-            ->condition('field_date',$first_day_of_month, '>=')
+            ->condition('field_date', $current_day, '=')
             ->condition('field_status','payed', '=')
             ->execute();     
                 // Load the nodes.
@@ -163,17 +162,14 @@ class ServiceRapport
             }
             return ($sum);
        }
-       function totalAchatParMois(){
-        // Get the current date.
-        $current_date = \Drupal::service('datetime.time')->getCurrentTime();
-
-        // Get the first and last day of the current month.
-        $first_day_of_month = strtotime('first day of this month', $current_date);
+       function totalAchatParJour(){
+        $current_date = new \DateTime();
+        $current_day = $current_date->format('Y-m-d');
 
         $entity_query = \Drupal::entityQuery('node');
         // Query for article nodes.
         $nids = $entity_query->condition('type', 'commande')
-        ->condition('field_date',$first_day_of_month, '>=')
+        ->condition('field_date', $current_day, '=')
         ->condition('field_status','payed', '=')
         ->execute();     
             // Load the nodes.

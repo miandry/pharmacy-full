@@ -109,7 +109,7 @@ class CommandeManagement
          $commande = Node::load($nid);
          if(isset($params["status"]) ){
            $commande->field_status = $params["status"];
-           if($params['remise']){
+           if(isset($params['remise'])){
              $commande->field_discount = 1;
              $commande->field_remise = $params["remise"];
            }

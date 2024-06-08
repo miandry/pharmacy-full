@@ -138,7 +138,7 @@
       </table>
 
       <div class="rounded-5">
-        {% if n.field_status != "payed" %}
+        {% if n.field_status == "unpayed" %}
         <label for="remise-select" class="form-label">Remise</label>
         <select class="form-select w-25" aria-label="Default select example" id="remise-select">
           <option selected value="">------</option>
@@ -148,7 +148,7 @@
         {% endif %}
         <div class="d-md-flex justify-content-between mt-4">
           <div class="mt-5 mt-md-0">
-            {% if n.field_status != "payed" %}
+            {% if n.field_status == "unpayed" %}
               <div class="d-flex">
                 <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment confirmer la commande?');" class="mx-2">
                   <input type="hidden" name="status" value="payed" />
@@ -165,6 +165,10 @@
                 <input type="hidden" name="telecharger" value="1" />
                 <a target="_blank" href="/ticket?id={{n.nid}}" class="btn btn-primary">Télécharger ticket de caisse</a>
                 <a target="_blank" href="/invoice?id={{n.nid}}" class="btn btn-primary">Télécharger la facture </a>
+                <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment annuler la commande?');" class="mx-2">
+                  <input type="hidden" name="status" value="cancel" />
+                  <button type="submit" class="btn btn-secondary">Annuler la Commande </button>
+                </form>
             {% endif %}
           </div>
           <div class="text-md-end mt-5 mt-md-0">
