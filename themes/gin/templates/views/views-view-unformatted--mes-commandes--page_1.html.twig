@@ -129,8 +129,9 @@ sticky ? 'sticky-enabled',
 				                                "total_achat": "{{n.field_total_achat}}",
                                         "articles": "{{at}}"
 				                            },
-				                   {% endfor %}
+				          {% endfor %}
 							]
+              console.log(data);
        function priceValueFormatter(value) {
         return new Intl.NumberFormat('en-DE').format(value) ;
       }

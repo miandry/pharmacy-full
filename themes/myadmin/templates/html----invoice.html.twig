@@ -643,9 +643,9 @@ hr {
   <header class="header--invoice" style="height: auto !important;">
   <div class="row align-items-left">
     <div class="col-sm-12 text-left text-left mb-3 mb-sm-0">
-      <img style="float:right" src="/themes/myadmin/images/logo.jpg" width="150"> 
-      <h1>PHARMACIE RABE</h1>
-      <h4 class="text-7 mb-0">FACTURE #INV-{{n.nid}} </h4>
+      <img style="float:right" src="/themes/myadmin/images/logo.jpg" width="55"> 
+      <h5>PHARMACIE RABE</h5>
+      <b class="text-2 mb-0">FACTURE #INV-{{n.nid}} </b>
     </div>
   </div>
   <hr>
@@ -669,12 +669,18 @@ hr {
       {% else %} <br/>
       {% endif %}
     </div>
+     <div class="col-sm-6 order-sm-0 text-end"> 
+         PHARMACIE RABE <br/>
+         Log D6 Akany Sambatra Andranonahoatra<br/>
+         STAT : 47721112015003931 <br/>
+         ⁠NIF: 5002029672 
+    </div>
   </div>
-	
+	<br/>
   <div class="card">
     <div class="card-body p-0">
       <div class="table-responsive">
-        <table class="table mb-0">
+        <table class="table table-sm mb-0">
           <thead class="card-header">
             <tr>
               <td colspan="4" class="col-10"><strong>Description</strong></td>
@@ -691,8 +697,8 @@ hr {
 
             <tr>
               <td colspan="4" class="col-10 text-1">
-                  <h5>{{a.title}} </h5>
-                  <b>{{price(a.field_prix_unitaire)}} Ar x  {{article.field_quantite}} {{a.field_stock_unitaire.title}}</b>   {% if (a.field_tva == 1) %}<i><span class="d-print-none"> ( Avec TVA ) </span></i>{% endif %}
+                  <span>{{a.title}} </span><br/>
+                  <b>{{price(a.field_prix_unitaire)}} Ar x  {{article.field_quantite}}</b>   {% if (a.field_tva == 1) %}<i><span class="d-print-none"> ( Avec TVA ) </span></i>{% endif %}
               </td>
               <td class="text-end">{{price(montant)}} </td>
             </tr>
@@ -708,6 +714,7 @@ hr {
               <td colspan="4" class="text-end"><strong>Sous Total:</strong></td>
               <td class="text-end">{{price(total)}} Ar</td>
             </tr>
+            {% set final = total + total_tva %}
             {% if (total_tva > 0) %}
               <tr>
                 <td colspan="4" class="text-end"><strong>TVA ( 20% )</strong></td>
@@ -719,22 +726,24 @@ hr {
                 <td colspan="4" class="text-end"><strong>Remise</strong></td>
                 <td class="text-end">{{ n.field_remise }} %</td>
               </tr>
+              {% set final = (total_tva + total)*(1-(n.field_remise)/100) %}
+            {% endif %} 
               <tr>
-                <td colspan="4" class="text-end border-bottom-0"><strong>Total:</strong></td>
-                <td class="text-end border-bottom-0">{{ price((total_tva + total)*(1-(n.field_remise)/100)) }} Ar</td>
-              </tr>
-           {% else %} 
-              <tr>
-              <td colspan="4" class="text-end border-bottom-0"><strong>Total:</strong></td>
-              <td class="text-end border-bottom-0">{{price(total + total_tva)}} Ar</td>
-              </tr> 
-           {% endif %} 
-         
+              <td colspan="4" class="text-end"><strong>Total:</strong></td>
+              <td class="text-end">{{price(final)}} Ar</td>
+              </tr>         
           </tfoot>
-
         </table>
       </div>
     </div>
+  </div>
+  <br/><br/>
+  <div classe="footer-card">
+          Arrêté à la somme de : <i><b>{{ number_to_words(final|round(0, 'floor'))|capitalize }} Ariary</b></i></br>
+          </br>
+          <b>Le Pharmacien</b>
+          </br>
+          </br>
   </div>
   </main>
   <!-- Footer -->

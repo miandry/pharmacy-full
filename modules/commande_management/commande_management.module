@@ -8,6 +8,8 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use \Drupal\views\ViewExecutable;
 /**
  * Implements hook_help().
  */
@@ -38,7 +40,7 @@ function commande_management_form_alter(&$form, FormStateInterface $form_state, 
 
  
 }
-use \Drupal\views\ViewExecutable;
+
 
 /**
  * Implements hook_views_pre_view(().
@@ -51,3 +53,16 @@ function commande_management_views_pre_view(ViewExecutable $view, $display_id, a
   }
 }
 
+/**
+ * Implements hook_views_query_alter().
+ */
+function commande_management_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  switch($view->storage->id()){
+    case 'mes_commandes';
+    $query->addField('node_field_data', 'nid', '', ['function' => 'groupby']);
+    $query->addGroupBy('node_field_data.nid');
+    break;
+
+  }
+  
+}

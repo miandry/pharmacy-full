@@ -108,9 +108,13 @@ class DrupalHelperTwigExtension extends AbstractExtension {
             new TwigFunction('set_config',['Drupal\drupal_helper\TwigExtension\DrupalHelperTwigExtension', 'set_config']),
             new TwigFunction('get_config',['Drupal\drupal_helper\TwigExtension\DrupalHelperTwigExtension', 'get_config']),
             new TwigFunction('delete_config',['Drupal\drupal_helper\TwigExtension\DrupalHelperTwigExtension', 'delete_config']),
-            new TwigFunction('loader_twig_file',['Drupal\drupal_helper\TwigExtension\DrupalHelperTwigExtension', 'loader_twig_file'])    
-         
+            new TwigFunction('loader_twig_file',['Drupal\drupal_helper\TwigExtension\DrupalHelperTwigExtension', 'loader_twig_file']) ,         
+            new TwigFunction('number_to_words',['Drupal\drupal_helper\TwigExtension\DrupalHelperTwigExtension', 'convert_number_to_words'])    
         ];
+    }
+    public static function convert_number_to_words($price){
+        $twig_base = new  \Drupal\drupal_helper\DrupalHelper();
+        return  $twig_base->helper->convert_number_to_words($price);
     }
     // templates/file.twig.html
     public static function loader_twig_file($uri,$values){
