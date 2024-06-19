@@ -62,6 +62,8 @@
 			}
 			.total {
 				margin-top: 20px;
+				font-size:32px;
+				margin-bottom:15px;
 			}
 			.total p {
 				margin: 5px 0;
@@ -124,15 +126,15 @@
          {% if n.field_remise %}
          			<div class="total">
 						<p>
-							Total (Avec remise {{n.field_remise|number_format}}%):
-							<strong>{{ price((total)*(1-(n.field_remise)/100)) }} Ar </strong>
+							<strong> Total ( - {{n.field_remise|number_format}}% ) :
+							{{ price((total)*(1-(n.field_remise)/100)) }} Ar </strong>
                         </p>
 					</div>
          {% else %}
 					<div class="total">
 						<p>
-							<strong>Total:</strong>
-							{{price(total)}} Ar
+							<strong>Total : 
+							{{price(total)}} Ar </strong>
                         </p>
 					</div>
           {% endif %}          

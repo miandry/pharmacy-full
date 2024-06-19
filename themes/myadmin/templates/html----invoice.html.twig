@@ -643,9 +643,11 @@ hr {
   <header class="header--invoice" style="height: auto !important;">
   <div class="row align-items-left">
     <div class="col-sm-12 text-left text-left mb-3 mb-sm-0">
-      <img style="float:right" src="/themes/myadmin/images/logo.jpg" width="55"> 
+      <img style="float:right" src="/themes/myadmin/images/logo.jpg" width="120"> 
       <h5>PHARMACIE RABE</h5>
-      <b class="text-2 mb-0">FACTURE #INV-{{n.nid}} </b>
+       Log D6 Akany Sambatra Andranonahoatra<br/>
+       STAT : 47721112015003931 <br/>
+       ⁠NIF: 5002029672 
     </div>
   </div>
   <hr>
@@ -656,25 +658,22 @@ hr {
   <div class="row">
     <div class="col-sm-6 text-sm-end order-sm-1"> 
       <strong></strong>
-  
+     
     </div>
     <div class="col-sm-6 order-sm-0"> 
     <span><strong>Antananarivo, le </strong> {{n.field_date}}</span> <br>
-    {% if(client.title != "INCONNUE") %}
-    <strong>Facturé à :</strong>
-      <address>
-      {{client.title}} <br/>
-      {{client.field_phone}} 
-      </address>
-      {% else %} <br/>
-      {% endif %}
+    <span>Facture #INV-{{n.nid}} </span><br>
     </div>
      <div class="col-sm-6 order-sm-0 text-end"> 
-         PHARMACIE RABE <br/>
-         Log D6 Akany Sambatra Andranonahoatra<br/>
-         STAT : 47721112015003931 <br/>
-         ⁠NIF: 5002029672 
-    </div>
+         {% if(client.title != "INCONNUE") %}
+        <strong>Facturé à :</strong>
+          <address>
+          {{client.title}} <br/>
+          {{client.field_phone}} 
+          </address>
+          {% else %} <br/>
+          {% endif %}
+     </div>
   </div>
 	<br/>
   <div class="card">
