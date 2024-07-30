@@ -159,12 +159,15 @@
                   <input type="hidden" name="status" value="cancel" />
                   <button type="submit" class="btn btn-secondary">Annuler la Commande </button>
                 </form>
+                <a class=" btn btn-secondary float-end" onclick="MyPopUpWin('/calculator',700,350)" href="javascript:void(0)" > Machine à calculer <a>
+      
               </div>
             {% endif %}
             {% if n.field_status == "payed" %}
                 <input type="hidden" name="telecharger" value="1" />
                 <a target="_blank" href="/ticket?id={{n.nid}}" class="btn btn-primary">Télécharger ticket de caisse</a>
                 <a target="_blank" href="/invoice?id={{n.nid}}" class="btn btn-primary">Télécharger la facture </a>
+
                 <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment annuler la commande?');" class="mx-2">
                   <input type="hidden" name="status" value="cancel" />
                   <button type="submit" class="btn btn-secondary">Annuler la Commande </button>
@@ -182,6 +185,18 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 <script>
+     function MyPopUpWin(url, width, height) {
+            var leftPosition, topPosition;
+            //Allow for borders.
+            leftPosition = (window.screen.width / 2) - ((width / 2) + 10);
+            //Allow for title and status bars.
+            topPosition = (window.screen.height / 2) - ((height / 2) + 50);
+            //Open the window.
+            window.open(url, "Window2",
+            "status=no,height=" + height + ",width=" + width + ",resizable=no,left="
+            + leftPosition + ",top=" + topPosition + ",screenX=" + leftPosition + ",screenY="
+            + topPosition + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
+        }
   var total = {{ total_tva + total }};
   $('input:radio[name="remise"]').change(
     function(){
