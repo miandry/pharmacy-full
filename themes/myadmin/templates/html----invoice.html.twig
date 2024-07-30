@@ -672,8 +672,8 @@ hr {
          {% if(client.title != "INCONNUE") %}
         <strong>Facturé à :</strong>
           <address>
-          {{client.title}} <br/>
-          {{client.field_phone}} 
+            {{client.title}} <br/>
+            {{client.field_phone}} 
           </address>
           {% else %} <br/>
           {% endif %}
@@ -703,7 +703,7 @@ hr {
                   <span class="myname">{{a.title}} </span><br/>
                   <span class="mydescr">{{price(a.field_prix_unitaire)}} Ar x  {{article.field_quantite}}</span>   {% if (a.field_tva == 1) %}<i><span class="d-print-none"> ( Avec TVA ) </span></i>{% endif %}
               </td>
-              <td  class="text-end">{{price(montant)}}  <br/><a class="d-print-none" id="modifier" href="#">Modifier</a></td>
+              <td class="text-end">{{price(montant)}}  <br/><a class="d-print-none modify" href="#">Modifier</a></td>
             </tr>
                 {% if (a.field_tva == 1) %}
                   {% set total_tva = total_tva + montant*0.20 %}
@@ -802,14 +802,14 @@ hr {
     </div>
 </div>
 <script>
-   			$('#modifier').on('click', function () {
+
+  
+      			$('.modify').on('click', function () {
                    // Use closest to find the parent div
-                   var parentDiv = $(this).parent().parent();     
+              var parentDiv = $(this).parent().parent();     
                     // Find the input within the parent div and get its value
-                  var myname = parentDiv.find('.myname').html();
-                  var mydescr = parentDiv.find('.mydescr').html();
-            
-      
+              var myname = parentDiv.find('.myname').html();
+              var mydescr = parentDiv.find('.mydescr').html();
 							$.confirm({
 								title: 'Modifier le description',
 							  content: '' +
@@ -837,7 +837,7 @@ hr {
 		            backgroundDismiss: true,
 		            closeIcon: true,
 							});
-						})
+				});
 </script>
 </body></html>
 
