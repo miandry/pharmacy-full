@@ -4,6 +4,7 @@
 {#{{kint(n.field_articles[0])}} {{die()}}#}
 {% set params = get_parameter() %}
 {{ attach_library('myadmin/bootstrap_css') }}
+{{ attach_library('myadmin/jquery_confirm') }}
 <style>
 .bg-gin{
   background-color:var(--colorGinToolBarBackground);
@@ -20,7 +21,16 @@
   color:#6c6c6c;
     text-transform: uppercase;
 }
-
+.hidden{
+   display:none;
+}
+.ctll{
+    height: 40px;
+    background-color: #dedede;
+}
+#invoice{
+  margin-top: -80px;
+}
 </style>
 <div class="container">
   <section id="invoice">
@@ -124,6 +134,7 @@
           <td></td>
           <td class="text-primary fs-5 fw-bold">Total</td>
           <td class="text-primary fs-5 fw-bold">{{ price((total_tva + total)*(1-(n.field_remise)/100)) }} Ar</td>
+          <input type="hidden" id="mytotal" value="{{total_tva + total}}" />
         </tr>
         {% else %}
         <tr id="remise-dynamique"></tr>
@@ -132,6 +143,7 @@
           <td></td>
           <td class="text-primary fs-5 fw-bold">Total</td>
           <td class="text-primary fs-5 fw-bold">{{ price(total_tva + total) }} Ar</td>
+           <input type="hidden" id="mytotal" value="{{total_tva + total}}" />
         </tr>
         {% endif %}
         </tbody>
@@ -150,16 +162,17 @@
           <div class="mt-5 mt-md-0">
             {% if n.field_status == "unpayed" %}
               <div class="d-flex">
-                <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment confirmer la commande?');" class="mx-2">
+                <button type="button" id="click_pay_confirm" class="btn btn-primary">Confirmez payement</button>
+                <form id="confirm_pay" class="hidden" action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment confirmer la commande?');" class="mx-2">
                   <input type="hidden" name="status" value="payed" />
                   <input type="hidden" name="remise" id="remise-input">
-                  <button type="submit" class="btn btn-primary">Confimer payement Reçues</button>
+                  <button type="submit" class="btn btn-danger">Confimez Maintenant</button>
                 </form>
                 <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment annuler la commande?');" class="mx-2">
                   <input type="hidden" name="status" value="cancel" />
                   <button type="submit" class="btn btn-secondary">Annuler la Commande </button>
                 </form>
-                <a class=" btn btn-secondary float-end" onclick="MyPopUpWin('/calculator',700,350)" href="javascript:void(0)" > Machine à calculer <a>
+                <a class=" btn btn-secondary float-end"  href="/{{current_url()}}" > Retour  <a>
       
               </div>
             {% endif %}
@@ -185,7 +198,7 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 <script>
-     function MyPopUpWin(url, width, height) {
+     {# function MyPopUpWin(url, width, height) {
             var leftPosition, topPosition;
             //Allow for borders.
             leftPosition = (window.screen.width / 2) - ((width / 2) + 10);
@@ -196,7 +209,7 @@
             "status=no,height=" + height + ",width=" + width + ",resizable=no,left="
             + leftPosition + ",top=" + topPosition + ",screenX=" + leftPosition + ",screenY="
             + topPosition + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no");
-        }
+        } #}
   var total = {{ total_tva + total }};
   $('input:radio[name="remise"]').change(
     function(){
@@ -210,6 +223,9 @@
   });
   $('#remise-select').change(function (){
     $('#remise-input').val($(this).val());
+    let with_remise = Math.round(total*(1- ($(this).val())/100));
+
+    
     if($(this).val()){
       $('#remise-dynamique').html('<td></td>'+
         '<td></td>'+
@@ -218,14 +234,73 @@
       $('#total-dynamique').html('<td></td>'+
         '<td></td>'+
       '<td class="text-primary fs-5 fw-bold">Total</td>'+
-      '<td class="text-primary fs-5 fw-bold">'+ total*(1- ($(this).val())/100) +' Ar</td>');
+      '<td class="text-primary fs-5 fw-bold">'+ with_remise +' Ar</td>'+
+      '<input type="hidden" id="mytotal" value="'+ with_remise +'" />'
+      );
     }else{
       $('#remise-dynamique').html('');
 
       $('#total-dynamique').html('<td></td>'+
         '<td></td>'+
         '<td class="text-primary fs-5 fw-bold">Total</td>'+
-        '<td class="text-primary fs-5 fw-bold">'+ total+' Ar</td>');
+        '<td class="text-primary fs-5 fw-bold">'+ total+' Ar</td>'+
+        '<input type="hidden" id="mytotal" value="'+total+'" />'
+        );
     }
   })
+ function formatNumber(number) {
+        return new Intl.NumberFormat('fr-FR').format(number);
+      }
+
+
+  		$('#click_pay_confirm').on('click', function () {
+              var jstotal = Math.round($('#mytotal').val());
+            
+							$.confirm({
+								title: 'Calculation',
+							  content: '' +
+                '<form action="" class="formName">' +
+                '<div class="form-group">' +
+                '<label> Total de l\'Achat </label>' +
+                '<p class="ctll form-control" required> <span class="jstotal">'+ (jstotal) +'</span> Ar </p>' +
+                '<label> Veuillez entrer le montant d\'argent du client </label>' +
+                '<input class="montant_argent form-control" required  /><br/>' +    
+                '<label> Retour de la monnaie </label>' +  
+                '<p class="montant_reste ctll form-control" required ></p><br/>' +   
+                '</div>' +
+                '</form>',
+		           buttons: {
+                    submitPay : {
+                        text: 'Confirmez Maintenant',
+                        btnClass: 'btn-blue',
+                        keys: ['enter', 'shift'],
+                        action: function(){
+                            var montant_argent = this.$content.find('.montant_argent').val();
+                            var rest = (montant_argent - jstotal) ;
+                            this.$content.find('.montant_reste').html(formatNumber(rest));
+                            
+                            if(confirm('Voulez-vous vraiment confirmer la commande?')){
+                              $('#confirm_pay')[0].submit(); 
+                            }else{
+                              return false ;
+                            }
+                        }
+                    },
+                    somethingElse: {
+                        text: 'Calculer',
+                        btnClass: 'btn-blue',
+                        keys: ['enter', 'shift'],
+                        action: function(){
+                              var montant_argent = this.$content.find('.montant_argent').val();
+                              var rest = (montant_argent - jstotal) ;
+                              this.$content.find('.montant_reste').html(formatNumber(rest));
+                              return false;
+                          
+                        }
+                    }
+                },
+		            backgroundDismiss: false,
+		            closeIcon: true,
+							});
+				});
 </script>

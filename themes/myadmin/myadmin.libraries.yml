@@ -13,6 +13,16 @@ bootstrap_full:
   dependencies:
     - core/jquery
 
+jquery_confirm:
+  header: true
+  css:
+    theme:
+      vendor/jquery-confirm/dist/jquery-confirm.min.css: {}
+  js:
+    vendor/jquery-confirm/dist/jquery-confirm.min.js: {}: {}  
+  dependencies:
+    - core/jquery
+
 bootstrap_table:
   header: true
   css:
