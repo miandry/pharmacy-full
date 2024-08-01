@@ -28,31 +28,31 @@ class ImportArticleForm extends FormBase {
     $service_helpe = \Drupal::service('drupal.helper');
     $result = $service_helpe->helper->storage_get('transfer_uploader');
     if(is_array($result) && !empty($result)){
-      $form['submit_two'] = [
-        '#type' => 'submit',
-        '#value' => $this->t('Submit Two'),
-        '#submit' => ['::submitFormTwo'],
-      ];
+      // $form['submit_two'] = [
+      //   '#type' => 'submit',
+      //   '#value' => $this->t('Submit Two'),
+      //   '#submit' => ['::submitFormTwo'],
+      // ];
     }else{
-      $form['upload'] = [
-        '#type' => 'managed_file',
-        '#required' => false,
-        '#title' => $this->t('Upload Excel'),
-        '#upload_location' => 'public://'.time(),
-        '#description' => $this->t('File format allowed : xlsx,xls,csv'),
-        '#upload_validators' => [
-          'file_validate_extensions' => ['csv'],
-        ],
-      ];
+      // $form['upload'] = [
+      //   '#type' => 'managed_file',
+      //   '#required' => false,
+      //   '#title' => $this->t('Upload Excel'),
+      //   '#upload_location' => 'public://'.time(),
+      //   '#description' => $this->t('File format allowed : xlsx,xls,csv'),
+      //   '#upload_validators' => [
+      //     'file_validate_extensions' => ['csv'],
+      //   ],
+      // ];
 
-    $form['actions'] = [
-      '#type' => 'actions',
-    ];
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Import'),
-      '#button_type' => 'primary',
-    ];
+    // $form['actions'] = [
+    //   '#type' => 'actions',
+    // ];
+    // $form['actions']['submit'] = [
+    //   '#type' => 'submit',
+    //   '#value' => $this->t('Import'),
+    //   '#button_type' => 'primary',
+    // ];
 
     }
   
