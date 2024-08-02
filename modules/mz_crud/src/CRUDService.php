@@ -266,7 +266,7 @@ class CRUDService extends CRUDBaseService
         $key_label = \Drupal::entityTypeManager()->getDefinition($entity_type)->getKey('label');
         $bundle_label = \Drupal::entityTypeManager()->getDefinition($entity_type)->getKey('bundle');
         $query = \Drupal::entityQuery($entity_type);
-        $query->condition($key_label, $value,'CONTAINS');
+        $query->condition($key_label, $value);
         $query->condition($bundle_label, $bundle);
         $query->range(0, 1);
         if ($status) {
