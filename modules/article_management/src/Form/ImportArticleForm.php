@@ -28,7 +28,15 @@ class ImportArticleForm extends FormBase {
     $service_helpe = \Drupal::service('drupal.helper');
     $result = $service_helpe->helper->storage_get('transfer_uploader');
     if(is_array($result) && !empty($result)){
-      $form['submit_two'] = [
+      $form['actions'] = [
+        '#type' => 'actions',
+      ];
+      $form['actions']['submit_clear'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Reupload Excel'),
+        '#submit' => ['::submitFormClear'],
+      ];
+      $form['actions']['submit_two'] = [
         '#type' => 'submit',
         '#value' => $this->t('Submit Two'),
         '#submit' => ['::submitFormTwo'],
@@ -58,6 +66,11 @@ class ImportArticleForm extends FormBase {
   
     return $form;
   }
+  public function submitFormClear(array &$form, FormStateInterface $form_state) {
+   
+    $service_helpe = \Drupal::service('drupal.helper');
+    $service_helpe->helper->storage_delete('transfer_uploader');
+   }
     /**
    * Méthode de soumission pour le deuxième bouton.
    */
@@ -157,11 +170,15 @@ class ImportArticleForm extends FormBase {
    * Fonction de traitement par lots.
    */
   public static function processBatch($item, &$context) {
-  
-     //nodeTitleDoesNotExist($title);
-    \Drupal::service('crud')->save('node', 'article',   $item);
+    $title = $item['title'];
+    $service_helpe = \Drupal::service('drupal.helper');
+    $status =  $service_helpe->node->isNodeTitleExist( $title);
+    if(!$status){
+       \Drupal::service('crud')->save('node', 'article',   $item);
+    }
+    
   }
-  public static function nodeTitleDoesNotExist($title) {
+  public function nodeTitleDoesNotExist($title) {
     // Créez une requête pour les entités de type 'node'.
     $query = \Drupal::entityQuery('node')
       ->condition('title', $title)
