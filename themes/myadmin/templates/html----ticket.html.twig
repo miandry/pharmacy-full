@@ -1,4 +1,5 @@
 	{% set params = get_parameter() %}
+	{% set montant_argent_input = params.montant_argent_input %}
 	{% set n = (node_parser(params.id)) %}
 	{% set client = node_parser(n.field_client.nid) %}
 
@@ -25,8 +26,8 @@
 			.body-invoice {
 				background: #e7e9ed;
 				color: #535b61;
-				font-size: 20px;
-				line-height: 22px;
+			    font-size: 14px;
+                line-height: 20px;
 			}
 
 			.receipt {
@@ -54,15 +55,15 @@
 			}
 			.items p {
 				margin: 5px 0;
-				font-size:20px;
+				font-size:16px;
 			}
 			.items .item {
 				display: flex;
-				justify-content: space-between;
+				justify-content: space-evenly;
 			}
 			.total {
 				margin-top: 20px;
-				font-size:32px;
+				font-size:24px;
 				margin-bottom:15px;
 			}
 			.total p {
@@ -87,6 +88,10 @@
 					border: none;
 					border-radius: 0;
 				}
+			}
+			.prix{
+			    margin-top: 15px;
+                font-size: 15px;
 			}
 		</style>
 	</head>
@@ -136,6 +141,12 @@
 							<strong>Total : 
 							{{price(total)}} Ar </strong>
                         </p>
+						<div class="prix">
+							Espèces : {{price(montant_argent_input)}} Ar 
+                        </div>
+						<div class="prix">
+							Espèces : {{price(total -  montant_argent_input)}} Ar 
+                        </div>
 					</div>
           {% endif %}          
 
