@@ -166,6 +166,7 @@
                 <form id="confirm_pay" class="hidden" action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment confirmer la commande?');" class="mx-2">
                   <input type="hidden" name="status" value="payed" />
                   <input type="hidden" name="remise" id="remise-input">
+                  <input type="hidden" name="montant_argent_input" id="montant_argent_input">
                   <button type="submit" class="btn btn-danger">Confimez Maintenant</button>
                 </form>
                 <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment annuler la commande?');" class="mx-2">
@@ -278,7 +279,7 @@
                             var montant_argent = this.$content.find('.montant_argent').val();
                             var rest = (montant_argent - jstotal) ;
                             this.$content.find('.montant_reste').html(formatNumber(rest));
-                            
+                            $('#montant_argent_input').val(montant_argent);
                             if(confirm('Voulez-vous vraiment confirmer la commande?')){
                               $('#confirm_pay')[0].submit(); 
                             }else{
@@ -293,7 +294,9 @@
                         action: function(){
                               var montant_argent = this.$content.find('.montant_argent').val();
                               var rest = (montant_argent - jstotal) ;
+                              $('#montant_argent_input').val(montant_argent);
                               this.$content.find('.montant_reste').html(formatNumber(rest));
+                              
                               return false;
                           
                         }
