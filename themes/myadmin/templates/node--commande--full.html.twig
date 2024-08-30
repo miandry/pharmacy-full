@@ -5,6 +5,7 @@
 {% set params = get_parameter() %}
 {{ attach_library('myadmin/bootstrap_css') }}
 {{ attach_library('myadmin/jquery_confirm') }}
+{% set montant_argent_input = params.montant_argent_input %}
 <style>
 .bg-gin{
   background-color:var(--colorGinToolBarBackground);
@@ -179,8 +180,9 @@
             {% endif %}
             {% if n.field_status == "payed" %}
                 <input type="hidden" name="telecharger" value="1" />
-                <a target="_blank" href="/ticket?id={{n.nid}}" class="btn btn-primary">Télécharger ticket de caisse</a>
-                <a target="_blank" href="/invoice?id={{n.nid}}" class="btn btn-primary">Télécharger la facture </a>
+              
+                <a target="_blank" href="/ticket?id={{n.nid}}&montant_argent_input={{montant_argent_input}}" class="btn btn-primary">Télécharger ticket de caisse</a>
+                <a target="_blank" href="/invoice?id={{n.nid}}montant_argent_input={{montant_argent_input}}" class="btn btn-primary">Télécharger la facture </a>
 
                 <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment annuler la commande?');" class="mx-2">
                   <input type="hidden" name="status" value="cancel" />
