@@ -115,7 +115,7 @@ class CommandeManagement
            }
            $commande->save();
            $service = \Drupal::service('drupal.helper');
-           $service->helper->redirectTo("/commande/".$nid);
+           $service->helper->redirectTo("/commande/".$nid."?montant_argent_input=".$params["status"]);
            return true;
          }
          if(isset($params["discount"]) ){
@@ -123,7 +123,7 @@ class CommandeManagement
            $commande->field_remise = $params["remise"];
            $commande->save();
            $service = \Drupal::service('drupal.helper');
-           $service->helper->redirectTo("/commande/".$nid);
+           $service->helper->redirectTo("/commande/".$nid."?montant_argent_input=".$params["status"]);
            return true;
          }
          return false ;

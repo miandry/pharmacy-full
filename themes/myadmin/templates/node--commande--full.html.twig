@@ -182,7 +182,7 @@
                 <input type="hidden" name="telecharger" value="1" />
               
                 <a target="_blank" href="/ticket?id={{n.nid}}&montant_argent_input={{montant_argent_input}}" class="btn btn-primary">Télécharger ticket de caisse</a>
-                <a target="_blank" href="/invoice?id={{n.nid}}montant_argent_input={{montant_argent_input}}" class="btn btn-primary">Télécharger la facture </a>
+                <a target="_blank" href="/invoice?id={{n.nid}}&montant_argent_input={{montant_argent_input}}" class="btn btn-primary">Télécharger la facture </a>
 
                 <form action="" method="POST" onsubmit="return confirm('Voulez-vous vraiment annuler la commande?');" class="mx-2">
                   <input type="hidden" name="status" value="cancel" />
