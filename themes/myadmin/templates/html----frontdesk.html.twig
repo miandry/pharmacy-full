@@ -1,3 +1,7 @@
+{% set user = current_user() %}
+{% if hasRole('vendeur',user.uid) == false  and  hasRole('administrator',user.uid) == false  and  hasRole('gerant',user.uid) == false %}
+{{ redict('/admin/articles')}}
+{% endif %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -159,7 +163,7 @@
 
 				</div>
 				<div class="row">
-					   <div class="col-md-6"><a  href="/dashboard"  class="btn mt-2 btn-secondary"> Retour à la plateforme</a></div>
+					   <div class="col-md-6"><a  href="/admin/articles"  class="btn mt-2 btn-secondary"> Retour à la plateforme</a></div>
 					   <div class="col-md-6"><button style="float:right" id="submit-btn" class="btn my-blue mt-2">Enregistrer</button></div>
 			    </div>
 
