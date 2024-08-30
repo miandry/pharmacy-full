@@ -290,7 +290,7 @@
                             }else{
                                if(confirm('Voulez-vous vraiment confirmer la commande?')){
                                                   $('#confirm_pay')[0].submit(); 
-                                }
+                              }
                                                  
                                                 
                             }
@@ -308,6 +308,8 @@
                               if(rest < 0){
                                this.$content.find('.montant_reste').addClass('red_color');
     
+                               }else{
+                                this.$content.find('.montant_reste').removeClass('red_color');
                                }
                               $('#montant_argent_input').val(montant_argent);
                               this.$content.find('.montant_reste').html(formatNumber(rest));
