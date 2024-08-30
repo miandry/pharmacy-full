@@ -89,9 +89,12 @@
 					border-radius: 0;
 				}
 			}
+			.content_prix{
+				margin-bottom:15px;
+			}
 			.prix{
-			    margin-top: 15px;
-                font-size: 15px;
+			    margin-top: 5px;
+                font-size: 18px;
 			}
 		</style>
 	</head>
@@ -135,24 +138,28 @@
 							{{ price((total)*(1-(n.field_remise)/100)) }} Ar </strong>
                         </p>
 					</div>
-						<div class="prix">
-							Espèces : {{price(montant_argent_input)}} Ar 
-                        </div>
-						<div class="prix">
-							Change : {{price((total)*(1-(n.field_remise)/100) -  montant_argent_input)}} Ar 
-                        </div>
+						<div class="content_prix">
+							<div class="prix">
+								Espèces : {{price(montant_argent_input)}} Ar 
+							</div>
+							<div class="prix">
+								Change : {{price((total)*(1-(n.field_remise)/100) -  montant_argent_input)}} Ar 
+							</div>
+						</div>
          {% else %}
 					<div class="total">
 						<p>
 							<strong>Total : 
 							{{price(total)}} Ar </strong>
                         </p>
-						<div class="prix">
-							Espèces : {{price(montant_argent_input)}} Ar 
-                        </div>
-						<div class="prix">
-							Change : {{price(total -  montant_argent_input)}} Ar 
-                        </div>
+						<div class="content_prix">
+							<div class="prix">
+								Espèces : {{price(montant_argent_input)}} Ar 
+							</div>
+							<div class="prix">
+								Change : {{price(total -  montant_argent_input)}} Ar 
+							</div>
+						</div>
 					</div>
           {% endif %}          
 
