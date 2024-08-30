@@ -32,6 +32,9 @@
 #invoice{
   margin-top: -80px;
 }
+.red_color{
+  color:red ;
+}
 </style>
 <div class="container">
   <section id="invoice">
@@ -282,6 +285,10 @@
                             var rest = (montant_argent - jstotal) ;
                             this.$content.find('.montant_reste').html(formatNumber(rest));
                             $('#montant_argent_input').val(montant_argent);
+                            if(rest < 0){
+                               this.$content.find('.montant_reste').addClass('red_color');
+                              return false ;
+                            }
                             if(confirm('Voulez-vous vraiment confirmer la commande?')){
                               $('#confirm_pay')[0].submit(); 
                             }else{
@@ -296,6 +303,10 @@
                         action: function(){
                               var montant_argent = this.$content.find('.montant_argent').val();
                               var rest = (montant_argent - jstotal) ;
+                              if(rest < 0){
+                               this.$content.find('.montant_reste').addClass('red_color');
+    
+                               }
                               $('#montant_argent_input').val(montant_argent);
                               this.$content.find('.montant_reste').html(formatNumber(rest));
                               
