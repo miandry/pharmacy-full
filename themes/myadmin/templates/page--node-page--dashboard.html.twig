@@ -1,3 +1,8 @@
+{% set user = current_user() %}
+{% if hasRole('administrator',user.uid) == false  and  hasRole('gerant',user.uid) == false %}
+{{ redirect('/admin/articles')}}
+{% endif %}
+
 {{ attach_library('myadmin/lib_dashboard') }}
 <style>
 	.top_vente {
