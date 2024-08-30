@@ -1,6 +1,6 @@
 {% set user = current_user() %}
 {% if hasRole('vendeur',user.uid) == false  and  hasRole('administrator',user.uid) == false  and  hasRole('gerant',user.uid) == false %}
-{{ redict('/admin/articles')}}
+{{ redirect('/admin/articles')}}
 {% endif %}
 <!DOCTYPE html>
 <html>
