@@ -107,7 +107,10 @@ sticky ? 'sticky-enabled',
                                 <th data-field="total_achat" data-formatter="priceValueFormatter" data-footer-formatter="total_achatFormatter">Total Achat</th>
                                 <th data-field="price" data-formatter="priceValueFormatter" data-footer-formatter="priceFormatter">Total vente</th>
                                 <th data-field="status" data-formatter="statusFormatter">Status commande</th>
+                                <th data-field="auteur" >Auteur</th>
+                                {% if hasRole('caissier') %}
                                 <th data-formatter="operateFormatter"></th>
+                                {% endif %}
 							</tr>
 						</thead> 
 	  </table>
@@ -124,7 +127,7 @@ sticky ? 'sticky-enabled',
 											     "date": "{{n.field_date}}",
                                                 "client": "{{n.field_client.title}}",
                                                 "status": "{{n.field_status}}",
-                                                "status": "{{n.field_status}}",
+                                                "auteur": "{{n.uid.name}}",
 				                                "price": "{{n.field_total_vente}}",
 				                                "total_achat": "{{n.field_total_achat}}",
                                         "articles": "{{at}}"
