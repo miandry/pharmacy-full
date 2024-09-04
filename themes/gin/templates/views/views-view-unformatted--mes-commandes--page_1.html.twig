@@ -108,7 +108,8 @@ sticky ? 'sticky-enabled',
                                 <th data-field="price" data-formatter="priceValueFormatter" data-footer-formatter="priceFormatter">Total vente</th>
                                 <th data-field="status" data-formatter="statusFormatter">Status commande</th>
                                 <th data-field="auteur" >Auteur</th>
-                                {% if hasRole('caissier') %}
+                                {% set user = current_user() %}
+                                {% if hasRole('caissier',user.uid) %}
                                 <th data-formatter="operateFormatter"></th>
                                 {% endif %}
 							</tr>
