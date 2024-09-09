@@ -1,53 +1,92 @@
 {% set commande  = node_parser(row._entity) %}
-
+  <style>
+    .table-row {
+      display: flex;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .table-header {
+      font-weight: bold;
+      background-color: var(--colorGinToolBarBackground) !important;
+    }
+    .table-cell {
+      padding: 10px;
+      border-right: 1px solid #dee2e6;
+      flex-grow: 1; /* Make all cells take equal width */
+      text-align: center;
+      width: 187px;
+    }
+    .table-cell:last-child {
+      border-right: none;
+    }
+    .footable-details  tr > th{
+      display:none
+    }
+      .badge-paid {
+    background: #28a745;
+  }
+  .badge-cancel {
+    background: #6c6c6c;
+  }
+  .badge {
+    display: inline-block;
+    font-weight: 700;
+    border-radius: 0.375rem;
+    text-align: center;
+    padding: 0.35em 0.65em;
+    white-space: nowrap;
+    color: #fff;
+    text-align: center;
+    font-size:12px;
+}
+.badge-unpaid {
+    background: #d2322d;
+}
+  </style>
 <div class="details-commande">
-   <div class="row commande-header">
-    <div class="col-md-5 commande-th">
-         <strong>Article</strong>
-    </div>
-    <div class="col-md-3 commande-th">
-      <strong>Prix unitaire</strong>
-    </div>
-    <div class="col-md-1 commande-th">
-      <strong>Qte</strong>
-    </div>
-    <div class="col-md-2 commande-th">
-      <strong>Montant</strong>
-    </div>
-  </div>
-    {% set total = 0 %}
-    {% for key, n in commande.field_articles %}
-    {% set article = node_parser(n.field_article.nid) %}
-    {% set sum = article.field_prix_unitaire * n.field_quantite  %}
-    <div class="row commande-body">
-        <div class="col-md-5 commande-col">
-            {{article.title}}
-        </div>
-        <div class="col-md-3 commande-col">
-         {{price(article.field_prix_unitaire)}} Ar 
-        </div>
-        <div class="col-md-1 commande-col">
-        {{n.field_quantite}}
-        </div>
-        <div class="col-md-2 commande-col">
-        {{price(sum)}} Ar
-        </div>
-  </div>
 
-    {% set total = sum + total %}
-    {% endfor %}
-    <div class="row commande-body">
-        <div class="col-md-5 commande-col">
-        </div>
-        <div class="col-md-3 commande-col">
-        </div>
-        <div class="col-md-1 commande-col">
-              Total 
-        </div>
-        <div class="col-md-2 commande-col">
-        <strong>{{price(total)}} Ar</strong>
-        </div>
-   </div>
+
+
+  <div class="container mt-5">
+    <!-- Table Header -->
+    <div class="table-row table-header">
+      <div class="table-cell col-1"><strong>Article</strong></div>
+      <div class="table-cell col-3"><strong>Prix unitaire</strong></div>
+      <div class="table-cell col-3"><strong>Qte</strong></div>
+      <div class="table-cell col-4"> <strong>Montant</strong></div>
+    </div>
+
+    {% set total = 0 %}
+      {% for key, n in commande.field_articles %}
+      {% set article = node_parser(n.field_article.nid) %}
+      {% set sum = article.field_prix_unitaire * n.field_quantite  %}
+      <div class="table-row">
+          <div class="table-cell col-1">
+              {{article.title}}
+          </div>
+          <div class="table-cell col-2">
+          {{price(article.field_prix_unitaire)}} Ar 
+          </div>
+          <div class="table-cell col-3">
+          {{n.field_quantite}}
+          </div>
+          <div class="table-cell col-4">
+          {{price(sum)}} Ar
+          </div>
+    </div>
+  
+
+      {% set total = sum + total %}
+      {% endfor %}
+
+      <!-- Table Row 1 -->
+    <div class="table-row">
+      <div class="table-cell col-1"></div>
+      <div class="table-cell col-3"></div>
+      <div class="table-cell col-3"></div>
+      <div class="table-cell col-4"> <strong>{{price(total)}} Ar</strong></div>
+    </div>
+
+  </div>
 
 
 
