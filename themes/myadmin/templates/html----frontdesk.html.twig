@@ -175,8 +175,7 @@
 
 			</div>
 		</div>
-
-		 <script>
+ <script>
 						var $table1 = $('#table1')
 						var $table2 = $('#table2')
 						var $add = $('#add')
@@ -212,22 +211,8 @@
 						}
 
 						$(function() {
-				    //	 var data =
-					//		[
-				     //       {% for item in articles|reverse %}
-					//								{% set n = node_parser(item) %}
-//
-				    //                       	{
-				    //                            "id": "{{n.nid}}",
-				    //                            "name": "{{n.title}} <br/> <span class=dci>{{n.field_dci.title}}</span>",
-					//						    "unite": "{{n.field_stock_unitaire.title}}",
-				    //                            "price": "{{n.field_prix_unitaire}}",
-				    //                            "qte": "{{n.field_quantite_stock}}"
-				    //                        },
-				     ///      {% endfor %}
-					//	]
-							$table1.bootstrapTable({url: '/api/articles'})
-						}) 
+							$table1.bootstrapTable({url: '/api/articles'});
+						})
 						$table1.on('check.bs.table uncheck.bs.table ' +
 							'check-all.bs.table uncheck-all.bs.table',
 							function () {
@@ -334,25 +319,9 @@
 							if(!my_total || !$('#client').val()){
 								return false
 							}
-							my_data['total'] = my_total ;
-							var mydata = JSON.stringify(my_data);
-							$('#post-data').val(JSON.stringify(my_data));
-							var formData = $('#my-form').serialize();
-							$.ajax({
-							url: '/api/save_commande',  // URL où envoyer les données
-							type: 'POST',
-							data: formData,  // Les données du formulaire
-							success: function(response) {
-								// Gérer la réponse en cas de succès
-								//$('#response').html('<p>Formulaire envoyé avec succès !</p>');
-								window.location.href = "/frontdesk";
-							},
-							error: function(xhr, status, error) {
-								// Gérer l'erreur en cas de problème
-							//	$('#response').html('<p>Erreur lors de l\'envoi du formulaire.</p>');
-								console.error('Erreur:', error);
-							}
-							});
+							my_data['total'] = my_total
+							$('#post-data').val(JSON.stringify(my_data))
+		          $('#my-form').submit()
 
 						})
 				    $('.js-client-select').select2({
@@ -361,5 +330,6 @@
 
 
 					</script>
+	
 	</body>
 </html>
