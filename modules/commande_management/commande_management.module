@@ -89,6 +89,7 @@ function __update_all_commande_nodes($start, $end) {
   if (!empty($nids)) {
     $nodes = Node::loadMultiple($nids);
     foreach ($nodes as $node) {
+            kint($node->id());
             $fields = $node->get('field_articles')->getValue();
             $para_news = [];
              foreach ($fields as $key => $field_item) {
