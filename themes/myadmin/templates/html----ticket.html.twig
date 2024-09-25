@@ -152,6 +152,7 @@
 							<strong>Total : 
 							{{price(total)}} Ar </strong>
                         </p>
+						{% if montant_argent_input %}
 						<div class="content_prix">
 							<div class="prix">
 								Espèces : {{price(montant_argent_input)}} Ar 
@@ -160,6 +161,7 @@
 								Change : {{price(montant_argent_input - total )}} Ar 
 							</div>
 						</div>
+						{% endif %}
 					</div>
           {% endif %}          
 
