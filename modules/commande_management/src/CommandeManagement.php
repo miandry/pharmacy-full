@@ -75,15 +75,15 @@ class CommandeManagement
                   $article = \Drupal::service('entity_parser.manager')->node_parser( $item["id"]);
                   $pa = $article["field_prix_d_achat"] ;
                   $pv = $article["field_prix_unitaire"] ;
-                  
+
                   $items[$key] = [
                      'field_article' => $item["id"],
                      'field_quantite' => $item["qte"],
                      'field_prix_d_achat' =>   $pa,
                      'field_prix_unitaire' =>   $pv
                   ];
-                  $pa_total = $pa * floatval($item["qte"]) ;
-                  $pv_total = $pv * floatval($item["qte"]) ;
+                  $pa_total = $pa_total + $pa * floatval($item["qte"]) ;
+                  $pv_total = $pv_total + $pv * floatval($item["qte"]) ;
                }
                $fields['field_total_achat'] =  $pa_total;
                $fields['field_total_vente'] =   $pv_total ;
