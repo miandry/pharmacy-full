@@ -62,23 +62,31 @@ class CommandeManagement
                $date_obj = new DrupalDateTime();
                $date = $date_obj->format('Y-m-d');
                $fields['field_date'] =  $date ;
-               $fields['field_total_vente'] = $arrayData['total'] ;
+              
                if(isset($params['client'])){
                   $fields['field_client'] = $params['client'] ;
                }
                $fields['field_status'] = "unpayed" ;
                $items = [];
                $pa_total = 0 ;
+               $pv_total = 0 ;
                foreach($arrayData['items'] as $key => $item){
+                
                   $article = \Drupal::service('entity_parser.manager')->node_parser( $item["id"]);
+                  $pa = $article["field_prix_d_achat"] ;
+                  $pv = $article["field_prix_unitaire"] ;
+                  
                   $items[$key] = [
                      'field_article' => $item["id"],
-                     'field_quantite' => $item["qte"]
+                     'field_quantite' => $item["qte"],
+                     'field_prix_d_achat' =>   $pa,
+                     'field_prix_unitaire' =>   $pv
                   ];
-                  $pa = $article["field_prix_d_achat"] ;
                   $pa_total = $pa * floatval($item["qte"]) ;
+                  $pv_total = $pv * floatval($item["qte"]) ;
                }
                $fields['field_total_achat'] =  $pa_total;
+               $fields['field_total_vente'] =   $pv_total ;
                $fields['field_articles'] = $items;
                $com_new = \Drupal::service('crud')->save('node', 'commande', $fields);
                if(is_object($com_new )){

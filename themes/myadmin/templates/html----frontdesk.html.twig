@@ -1,8 +1,7 @@
 {% set user = current_user() %}
-{% if hasRole('vendeur',user.uid) == false  and  hasRole('administrator',user.uid) == false  and  hasRole('gerant',user.uid) == false %}
-{{ redirect('/admin/articles')}}
-{% endif %}
+
 {% set root_theme = base_url() ~ '/themes/myadmin' %}
+
 <!DOCTYPE html>
 <html>
 	<head>

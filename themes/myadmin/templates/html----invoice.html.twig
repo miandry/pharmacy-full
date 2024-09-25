@@ -696,12 +696,12 @@ hr {
           {% set remise  = 0 %}
            {% for article in n.field_articles %}
           {% set a = node_parser(article.field_article.nid) %}
-          {% set montant = a.field_prix_unitaire * article.field_quantite %}
+          {% set montant = article.field_prix_unitaire * article.field_quantite %}
 
             <tr class="myparent">
               <td id="nid__{{a.nid}}" colspan="4" class="col-10 text-1">
                   <span class="myname">{{a.title}} </span><br/>
-                  <span class="mydescr">{{price(a.field_prix_unitaire)}} Ar x  {{article.field_quantite}}</span>   {% if (a.field_tva == 1) %}<i><span class="d-print-none"> ( Avec TVA ) </span></i>{% endif %}
+                  <span class="mydescr">{{price(article.field_prix_unitaire)}} Ar x  {{article.field_quantite}}</span>   {% if (a.field_tva == 1) %}<i><span class="d-print-none"> ( Avec TVA ) </span></i>{% endif %}
               </td>
               <td class="text-end">{{price(montant)}}  <br/><a class="d-print-none modify" href="#">Modifier</a></td>
             </tr>

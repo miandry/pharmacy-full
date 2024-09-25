@@ -121,7 +121,7 @@
          {% set remise  = 0 %}
          {% for article in n.field_articles %}
           {% set a = node_parser(article.field_article.nid) %}
-          {% set montant = a.field_prix_unitaire * article.field_quantite %}
+          {% set montant = article.field_prix_unitaire * article.field_quantite %}
                     	<div class="item">
 							<p>{{ article.field_quantite }}</p>
 							<p>{{ a.title }}</p>

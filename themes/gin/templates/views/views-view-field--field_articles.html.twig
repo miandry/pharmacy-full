@@ -58,7 +58,7 @@
     {% set total = 0 %}
       {% for key, n in commande.field_articles %}
       {% set article = node_parser(n.field_article.nid) %}
-      {% set sum = article.field_prix_unitaire * n.field_quantite  %}
+      {% set sum = n.field_prix_unitaire * n.field_quantite  %}
       <div class="table-row">
           <div class="table-cell col-1">
               {{article.title}}

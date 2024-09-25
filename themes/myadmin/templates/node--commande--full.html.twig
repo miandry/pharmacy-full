@@ -93,11 +93,11 @@
            {% set total_tva  = 0 %}
         {% for article in n.field_articles %}
           {% set a = node_parser(article.field_article.nid) %}
-          {% set montant = a.field_prix_unitaire * article.field_quantite %}
+          {% set montant = article.field_prix_unitaire * article.field_quantite %}
 
           <tr>
             <td>{{ a.title }} {% if (a.field_tva == 1) %} ( Avec TVA ){% endif %} </td>
-            <td>{{ price(a.field_prix_unitaire) }} Ar</td>
+            <td>{{ price(article.field_prix_unitaire) }} Ar</td>
             <td>{{ article.field_quantite }}</td>
             <td>{{ price(montant) }} Ar</td>
           </tr>

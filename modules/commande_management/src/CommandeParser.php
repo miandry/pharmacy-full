@@ -42,7 +42,7 @@ class CommandeParser extends EntityParser
                                 'id' => $el['field_article']['nid'],
                                 'field_quantite' => $el['field_quantite'],
                                 'field_article' => $el['field_article']['title'],  
-                                'price_unitaire' =>   $price
+                                'price_unitaire' =>   $el['field_prix_unitaire']
                                ];
                           }             
                     
