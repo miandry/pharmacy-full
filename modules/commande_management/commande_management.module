@@ -10,6 +10,10 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use \Drupal\views\ViewExecutable;
+use Drupal\node\Entity\Node;
+use Drupal\paragraphs\Entity\Paragraph;
+
+
 /**
  * Implements hook_help().
  */
@@ -66,3 +70,39 @@ function commande_management_views_query_alter(ViewExecutable $view, QueryPlugin
   }
   
 }
+
+/**
+ * Deletes all nodes of a specific content type.
+ */
+function __update_all_commande_nodes($start, $end) {
+
+  $node_type = 'commande';
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', $node_type)
+    ->range(0, $end)
+    ->sort('nid', 'DESC');
+  $nids = $query->execute();
+  $para_service =  \Drupal::entityTypeManager()->getStorage('paragraph');
+  $node_service = \Drupal::entityTypeManager()->getStorage('node');
+  $parser = \Drupal::service('entity_parser.manager');
+  kint(sizeof($nids));
+  if (!empty($nids)) {
+    $nodes = Node::loadMultiple($nids);
+    foreach ($nodes as $node) {
+            $fields = $node->get('field_articles')->getValue();
+            $para_news = [];
+             foreach ($fields as $key => $field_item) {
+                $para = $para_service->load($field_item['target_id']);
+                $node_article = $parser->node_parser($para->field_article->target_id);
+                $para->field_prix_d_achat->value = $node_article['field_prix_d_achat'];
+                $para->field_prix_unitaire->value = $node_article['field_prix_unitaire'];
+                $status = $para->save();
+            }
+    }
+  }else{
+
+  }
+  die();
+ 
+}
+
