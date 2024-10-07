@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * @file
+ * Contains html_page.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use \Drupal\views\ViewExecutable;
+use Drupal\node\Entity\Node;
+use Drupal\paragraphs\Entity\Paragraph;
+
+
+
+/**
+ * Implements hook_help().
+ */
+function article_management_help($route_name, RouteMatchInterface $route_match)
+{
+    switch ($route_name) {
+        // Main module help for the html_page module.
+        case 'help.page.commande_management':
+            $output = '';
+            $output .= '<h3>' . t('commande_management') . '</h3>';
+            $output .= '<p>' . t('commande_management system') . '</p>';
+            return $output;
+        default:
+    }
+}
+
+/**
+ * Implements hook_views_query_alter().
+ *
+ * Alters the query for the REST view to use offset and limit.
+ */
+// function article_management_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+//   // Target the specific view and display.
+
+//   if ($view->id() === 'mes_articles' && $view->current_display === 'rest_export_1') {
+    
+//         // Get the offset and limit from the URL query parameters.
+//         $limit = \Drupal::request()->query->get('limit');
+//         $offset = \Drupal::request()->query->get('offset');
+    
+//         // Set default values if limit and offset are not provided.
+//         $limit = is_numeric($limit) ? (int) $limit : 10;  // Default limit: 10
+//         $offset = is_numeric($offset) ? (int) $offset : 0;  // Default offset: 0
+//         $query->setLimit(30) ;
+//           // Check if the query is a Select query (database query object).
+//     if ($query->query() instanceof \Drupal\Core\Database\Query\Select) {
+//       // Apply the range (pagination) on the actual database query object.
+//       //$query->range(0, 1);  // For example, limit the query to 10 rows.
+//     }
+//   }
+// }
+

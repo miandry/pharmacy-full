@@ -67,16 +67,14 @@
 				font-weight: bold;
 				font-style: italic;
 			}
+			.bootstrap-table  .pagination-detail .page-list{
+				display:none!important;
+			}
 		</style>
 	</head>
 	<body class="body-front">
 
 
-		{%  set conditions = {
-            'type': 'article'
-        }
-   %}
-		{% set articles = node_parser_by_properties(conditions)%}
 	
 		{%  set condition2 = {
         'type': 'client'
@@ -118,7 +116,19 @@
 					</div>
                 {% else  %}
 					<div class="col-md-6">
-					<table id="table1"  data-search-on-enter-key="true" data-search="true" data-single-select="true" data-click-to-select="true" data-search-align="left" data-pagination="true" data-locale="fr-FR" data-thead-classes='head-blue'>
+					<table id="table1"  
+					 data-search-on-enter-key="true" 
+					 data-search="true"
+					 data-single-select="true" 
+					 data-click-to-select="true" 
+					 data-search-align="left" 
+					 data-pagination="true" 
+					 data-url="http://pharmacy.local:8888/api/articles"
+					 data-side-pagination="server"
+					 data-show-page-list="false"
+					 data-query-params="queryParams"
+                     data-response-handler="responseHandler"
+					 data-locale="fr-FR" data-thead-classes='head-blue'>
 						<thead>
 							<tr>
 								<th data-field="state" data-checkbox="true"></th>
@@ -175,6 +185,22 @@
 			</div>
 		</div>
  <script>
+
+ function queryParams(params) {
+	     return {
+          page: Math.ceil(params.offset / params.limit) ,  // Calculate the current page number
+          limit: params.limit,                               // Number of records per page
+          search: params.search                              // Search term if applicable
+        };
+}
+function responseHandler(res) {
+    return {
+        total: res.total,      // Total rows in the data set
+        rows: res.rows         // Actual data for the current page
+    };
+}
+
+
 						var $table1 = $('#table1')
 						var $table2 = $('#table2')
 						var $add = $('#add')
@@ -210,7 +236,7 @@
 						}
 
 						$(function() {
-							$table1.bootstrapTable({url: '/api/articles'});
+							$table1.bootstrapTable();
 						})
 						$table1.on('check.bs.table uncheck.bs.table ' +
 							'check-all.bs.table uncheck-all.bs.table',
