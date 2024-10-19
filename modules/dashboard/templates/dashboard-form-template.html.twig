@@ -20,12 +20,13 @@
 		height: 115px;
 		overflow-y: scroll;
 	}
-    .dashboard_page .block-system > form{
-      border-radius:none!important;
-    }
+  .dashboard_page .block-system > form {
+    border: none !important;
+    padding: 0!important;
+}
 </style>
 
-{% set valeur_stock =  config('dashboard.list','valuer_stock') %}
+{% set valeur_stock =   form['#valuer_stock'] %}
 {% set top_vente =  form['#top_vente'] %}
 {% set bas_stock =   form['#bas_stock'] %}
 {% set rupture_stock =   form['#rupture_stock'] %}
@@ -33,6 +34,7 @@
 {% set total_vente_par_jour = form['#total_vente_par_jour'] %}
 {% set benefice = form['#benefice'] %}
 {% set venteParMois =  config('dashboard.list','venteParMois') %}
+{% set venteParAnnulle =  config('dashboard.list','venteParAnnulle') %}
 
 
 
@@ -207,7 +209,7 @@
 				</div>
 				<div class="card-body">
 					<h6 class="mb-0 ">Historique des ventes et des achats de l'année</h6>
-					<p class="text-sm ">Comparer les achat et ventes
+					<p class="text-sm ">Comparer les achat et ventes pour {{ "now"|date("Y") }}
 					</p>
 				</div>
 			</div>
@@ -223,7 +225,7 @@
 				</div>
 				<div class="card-body">
 					<h6 class="mb-0 ">
-						Ventes quotidiennes
+						Ventes quotidiennes pour {{ "now"|date("F Y") }}
 					</h6>
 					<p class="text-sm ">
 						suivre l'evolution de votre commande.

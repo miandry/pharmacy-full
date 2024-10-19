@@ -22,12 +22,29 @@ class ServiceRapport
         // Query for article nodes.
         return $entity_query->condition('type', 'article')
         ->execute();
-       }
+        }
+        function getStockValeur(){
+            $query = Database::getConnection()->select('node_field_data', 'nfd');
+            $query->join('node__field_quantite_stock', 'fqs', 'nfd.nid = fqs.entity_id');
+            $query->join('node__field_prix_unitaire', 'u', 'nfd.nid = u.entity_id');
+            $query->condition('nfd.type', 'article');  // Filter by content type 'article'.
+    
+            $query->addExpression('SUM(fqs.field_quantite_stock_value*u.field_prix_unitaire_value)', 'total_valeur'); // Sum of quantities.
+            // Execute the query.
+            $result = $query->execute();
+            // Fetch the results as an associative array.
+            $sum =  $result->fetchAll();
+            if(!empty( $sum)){
+              return  $sum[0]->total_valeur;
+            }
+            return 0 ;
+        }
        function getStockRuputure(){
             $query = Database::getConnection()->select('node_field_data', 'nfd');
             $query->join('node__field_quantite_stock', 'fqs', 'nfd.nid = fqs.entity_id');
+            $query->join('node__field_prix_unitaire', 'u', 'nfd.nid = u.entity_id');
             $query->condition('nfd.type', 'article');  // Filter by content type 'article'.
-            $query->condition('fqs.field_quantite_stock_value',0,'<='); 
+           // $query->condition('fqs.field_quantite_stock_value',0,'>'); 
             $query->addField('nfd', 'nid', 'id'); 
             $query->addField('nfd', 'title', 'name'); 
             $query->addField('fqs', 'field_quantite_stock_value', 'stock'); 
@@ -99,12 +116,6 @@ class ServiceRapport
 
 
        }
-
-       function topAchactParMois(){
-
-       }
-
-
        function getDaysList(){
                     // Get the current year and month
             $currentYear = date('Y');
@@ -259,6 +270,55 @@ class ServiceRapport
                 }
                 return 0 ;
        }
+       function getVenteParAnnee(){
+
+  
+        $current_year = date('Y');
+        $start_date = new DrupalDateTime("{$current_year}-01-01T00:00:00");
+        $start_timestamp = $start_date->getTimestamp();
+        $first_day_of_year = date('Y-m-d 00:00:00', $start_timestamp);
+
+        // Start the select query from node_field_data.
+        $query = Database::getConnection()->select('node_field_data', 'nfd');
+
+        // Join field table for 'field_date' and 'field_status' (assuming they are fieldable entity fields).
+        $query->join('node__field_date', 'fd', 'nfd.nid = fd.entity_id');
+        $query->join('node__field_status', 'fs', 'nfd.nid = fs.entity_id');
+        $query->join('node__field_total_vente', 'tt', 'nfd.nid = tt.entity_id');
+        $query->join('node__field_total_achat', 'ta', 'nfd.nid = ta.entity_id');
+        // Add conditions.
+        $query->condition('nfd.type', 'commande');  // Filter by content type 'commande'.
+        $query->condition('fd.field_date_value',$first_day_of_year, '>=');  // Filter by date range.
+        $query->condition('fs.field_status_value', 'payed');  // Only nodes with status 'payed'.
+        $query->addExpression("DATE_FORMAT(fd.field_date_value, '%Y-%m')", 'formatted_date');
+        $query->addExpression("SUM(tt.field_total_vente_value)", 'total_vente');
+        $query->addExpression("SUM(ta.field_total_achat_value)", 'total_achat');
+        $query->orderBy('formatted_date', 'ASC');
+        $query->groupBy('formatted_date');
+        $result = $query->execute();
+        $months = $this->getMoisList();
+      
+        // Fetch the node IDs.
+        $resultat = $result->fetchAllAssoc('formatted_date');
+        $final_vente = [];
+        $final_achat = [];
+        foreach ($months as $mt) {
+            if(!isset($resultat[$mt])){
+                $final_vente[$mt] = 0 ;
+            }else{
+                $final_vente[$mt] = $resultat[$mt]->total_vente;
+            }
+            if(!isset($resultat[$mt])){
+                $final_achat[$mt] = 0 ;
+            }else{
+                $final_achat[$mt] = $resultat[$mt]->total_achat;
+            }
+        }
+        return [
+            'vente' =>  $final_vente ,
+            'achat' => $final_achat
+        ];
+   }
        function getVenteParMois(){
 
             $current_date = \Drupal::service('datetime.time')->getCurrentTime();
