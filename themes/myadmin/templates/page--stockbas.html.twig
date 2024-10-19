@@ -14,6 +14,7 @@
 		<th data-field="id">ID</th>
 		<th data-field="name">Article</th>
 		<th data-field="stock">Reste Stock</th>
+		<th data-field="limit">Limit Stock</th>
 	</tr>
 </thead></table>
 </div>
@@ -22,7 +23,6 @@
 	
 	  $(function() {
         var data = {{ getStockBas | json_encode | raw }}
-	    console.log(data);
 	    $table.bootstrapTable({data: data})
 	  })
 	</script>

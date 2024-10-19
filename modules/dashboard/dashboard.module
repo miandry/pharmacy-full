@@ -26,26 +26,22 @@ function dashboard_node_update(EntityInterface $entity) {
 function dashboard_preprocess_page(&$variables) {
   $current_path = \Drupal::service('path.current')->getPath();
   $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
-  if ($current_path_alias == '/dashboard') {
-    $service = \Drupal::service('dashboard.manager');
-    // $variables["venteParAnnulle"] =     $service->venteParAnnulle();
-    // $variables["total_vente_par_jour"] = $service->totalVenteParJour() ;
-    // $variables["valeur_stock"] = $service->valeurDuStock() ;
-    // $variables["rupture_stock"] = $service->stockRuputure() ;
-    // $variables["bas_stock"] = $service->stockBas(10) ;
-    // $variables["top_vente"] = $service->topVenteParMois();
-    // $variables["venteParMois"] =  $service->venteParMois();
-    // $variables["totalAchatParJour"] =  $service->totalAchatParJour();
-    // $variables["dateProche"] =  $service->dateProche();
-    
-   // $saved = $service->totalVenteParMois();   
-    $variables['#cache']['max-age'] = 0;
-    //die("ok");
-  }
   if ($current_path_alias == '/stockbas') {
     $service = \Drupal::service('dashboard.manager');
-    $variables["getStockBas"] =     $service->getStockBas();
+    $variables["getStockBas"] = array_values($service->getQueryStockBas());
     $variables['#cache']['max-age'] = 0;
     
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function dashboard_theme($existing, $type, $theme, $path) {
+  return [
+    'dashboard_form_template' => [
+      'render element' => 'form',
+      'template' => 'dashboard-form-template',
+    ],
+  ];
 }

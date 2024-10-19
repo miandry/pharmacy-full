@@ -11,178 +11,100 @@ namespace Drupal\dashboard;
 
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Database\Database;
+
+
 
 class ServiceRapport
 {
-
-       function valeurDuStock(){
-         // Get the entity query service.
-        // Get the entity query service for nodes.
-            $entity_query = \Drupal::entityQuery('node');
-
-            // Query for article nodes.
-            $nids = $entity_query->condition('type', 'article')
-            ->execute();
-
-                // Load the nodes.
-            $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
-            $sum = 0 ;
-            // Output the node titles.
-            foreach ($nodes as $article) {
-               $stock =  $article->field_quantite_stock->value ;
-               $pv = $article->field_prix_unitaire->value  ;
-               $sum  = $sum  + floatval($pv)*floatval($stock);
-
-            }
-            return ($sum);
-       }
-       function getStockBas(){
+       function getQueryvaleurDuStock(){
         $entity_query = \Drupal::entityQuery('node');
-        $nids = $entity_query->condition('type', 'article')
+        // Query for article nodes.
+        return $entity_query->condition('type', 'article')
         ->execute();
-        $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
-        $stockbas=[] ;
-        foreach ($nodes as $article) {
-           $stock =  $article->field_quantite_stock->value ;
-           if($article->field_limite_stock){
-                $min =  $article->field_limite_stock->value ;
-                if( 0 < $stock &&  $stock <= $min){
-                    $t = \Drupal::service('entity_parser.manager')->node_parser($article) ;
-                    $stockbas[] = [
-                        'id' => $t['nid'],
-                        'name' => $t['title'],
-                        'stock' => $t['field_quantite_stock']
-                    ];
-                }
-           }
-        }
-        return $stockbas;
        }
-       function stockBas($min){
-        $entity_query = \Drupal::entityQuery('node');
-        $nids = $entity_query->condition('type', 'article')
-        ->execute();
-        $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
-        $stockbas=[] ;
-        foreach ($nodes as $article) {
-           $stock =  $article->field_quantite_stock->value ;
-           if($article->field_limite_stock){
-                $min =  $article->field_limite_stock->value ;
-                if( 0 < $stock &&  $stock <= $min){
-                $stockbas[] = $article ;
-                }
-           }
-        }
-        return sizeof($stockbas);
+       function getStockRuputure(){
+            $query = Database::getConnection()->select('node_field_data', 'nfd');
+            $query->join('node__field_quantite_stock', 'fqs', 'nfd.nid = fqs.entity_id');
+            $query->condition('nfd.type', 'article');  // Filter by content type 'article'.
+            $query->condition('fqs.field_quantite_stock_value',0,'<='); 
+            $query->addField('nfd', 'nid', 'id'); 
+            $query->addField('nfd', 'title', 'name'); 
+            $query->addField('fqs', 'field_quantite_stock_value', 'stock'); 
+            // Execute the query.
+            $result = $query->execute();
+            // Fetch the results as an associative array.
+            return sizeof($result->fetchAllAssoc('id'));
        }
-       function stockRuputure(){
-        $entity_query = \Drupal::entityQuery('node');
-        $nids = $entity_query->condition('type', 'article')
-        ->execute();
-        $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
-        $stockbas=[] ;
-        foreach ($nodes as $article) {
-           $stock =  $article->field_quantite_stock->value ;
-           if(  $stock <= 0){
-            $stockbas[] = $article ;
-           }
-        }
-        return sizeof($stockbas);
+       function getQueryStockBas(){
+            $query = Database::getConnection()->select('node_field_data', 'nfd');
+            $query->join('node__field_quantite_stock', 'fqs', 'nfd.nid = fqs.entity_id');
+            $query->join('node__field_limite_stock', 'fls', 'nfd.nid = fls.entity_id');
+            //$query->range(0,100);
+            $query->condition('nfd.type', 'article');  // Filter by content type 'article'.
+            $query->where('fqs.field_quantite_stock_value < fls.field_limite_stock_value');
+            $query->where('fqs.field_quantite_stock_value >  0');
+            $query->addField('nfd', 'nid', 'id'); 
+            $query->addField('nfd', 'title', 'name'); 
+            $query->addField('fqs', 'field_quantite_stock_value', 'stock'); 
+            $query->addField('fls', 'field_limite_stock_value', 'limit'); 
+            // Execute the query.
+            $result = $query->execute();
+            // Fetch the results as an associative array.
+            return $result->fetchAllAssoc('id');
        }
+       function getQueryTopVenteArticleParMois(){
+
+                 
+        $current_date = \Drupal::service('datetime.time')->getCurrentTime();
+        $first_day_of_month = date('Y-m-d 00:00:00', strtotime('first day of this month', $current_date));
+        $last_day_of_month = date('Y-m-d 23:59:59', strtotime('last day of this month', $current_date));
+    
+
+                // Step 1: Build the database query on 'node_field_data' table.
+                $query = Database::getConnection()->select('node_field_data', 'nfd');
+
+                // Join the paragraph table for 'field_quantite' (quantity of articles).
+                $query->join('paragraph__field_quantite', 'pq', 'nfd.nid = pq.entity_id');
+
+                // Join the paragraph table for 'field_article' (referenced article).
+                $query->join('paragraph__field_article', 'pra', 'pq.entity_id = pra.entity_id');
+                $query->join('node__field_date', 'date', 'nfd.nid = date.entity_id ');
+
+                $query->range(0,10);
+                // Add conditions to filter the right nodes.
+                $query->condition('nfd.type', 'commande');  // Filter by content type 'commande'.
+                //$query->condition('nfd.status', 1);  // Only published nodes.
+                $query->condition('date.field_date_value', [$first_day_of_month, $last_day_of_month], 'BETWEEN');
+
+                // Group by the referenced article ID.
+                $query->groupBy('pra.field_article_target_id');
+
+                // Select the fields.
+                $query->addField('pra', 'field_article_target_id', 'article_nid'); // Article ID as 'article_nid'.
+                $query->addExpression('SUM(pq.field_quantite_value)', 'total_quantity'); // Sum of quantities.
+
+                // Order by the total quantity sold in descending order.
+                $query->orderBy('total_quantity', 'DESC');
+
+                // Limit the query to the top 5 results.
+                $query->range(0, 5);
+
+                // Execute the query.
+                $result = $query->execute();
+
+                // Fetch the results as an associative array.
+                return array_values($result->fetchAll());
+
+
+
+       }
+
        function topAchactParMois(){
 
        }
-       function topVenteParMois(){
-            // Get the current date.
-            $current_date = \Drupal::service('datetime.time')->getCurrentTime();
 
-            // Get the first and last day of the current month.
-            $first_day_of_month = strtotime('first day of this month', $current_date);
 
-            $entity_query = \Drupal::entityQuery('node');
-            // Query for article nodes.
-            $nids = $entity_query->condition('type', 'commande')
-            ->condition('field_date',$first_day_of_month, '>=')
-            ->condition('field_status','payed', '=')
-            ->sort('field_date','desc')
-            ->range(0,10)
-            ->execute();     
-                // Load the nodes.
-
-            $top = [] ;
-            $sorts=[];
-            // Output the node titles.
-            foreach ($nids as $nid) {
-                $commande = \Drupal::service('entity_parser.manager')->node_parser($nid);
-                $paras =   $commande["field_articles"];
-                foreach ( $paras as $p) {
-                    $para = \Drupal::service('entity_parser.manager')->paragraph_parser($p["id"]);
-                    if(isset($para['field_article']) && isset($para['field_article']["nid"])){
-                        $id = $para['field_article']["nid"];
-                        $top[$id]['name'] = $para['field_article']['title'];
-                        if(!isset($top[$id]['num'])){
-                            $top[$id]['num'] = 0 ;
-                        }
-                        $top[$id]['num'] =  $top[$id]['num'] + floatval($para["field_quantite"]);   
-                        $sorts[$id] = $top[$id]['num'] ; 
-                    }
-             
-                }
-            }
-            uasort($sorts, function($a, $b) {
-                return $b - $a;
-            });
-            $sort_final = [];
-            foreach ($sorts as $key =>  $s) {
-                $sort_final[] =  $top[$key];
-            }
-
-            return  $sort_final;   
-       }
-       function totalVenteParJour(){
-           $current_date = new \DateTime();
-           $current_day = $current_date->format('Y-m-d');
-   
-      
-
-            $entity_query = \Drupal::entityQuery('node');
-            // Query for article nodes.
-            $nids = $entity_query->condition('type', 'commande')
-            ->condition('field_date', $current_day, '=')
-            ->condition('field_status','payed', '=')
-            ->execute();     
-                // Load the nodes.
-            $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
-            $sum = 0 ;
-            // Output the node titles.
-            foreach ($nodes as $commande) {
-                $pv = $commande->field_total_vente->value  ;
-                $sum  = $sum  + floatval($pv) ;
-                            
-            }
-            return ($sum);
-       }
-       function totalAchatParJour(){
-        $current_date = new \DateTime();
-        $current_day = $current_date->format('Y-m-d');
-
-        $entity_query = \Drupal::entityQuery('node');
-        // Query for article nodes.
-        $nids = $entity_query->condition('type', 'commande')
-        ->condition('field_date', $current_day, '=')
-        ->condition('field_status','payed', '=')
-        ->execute();     
-            // Load the nodes.
-        $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
-        $sum = 0 ;
-        // Output the node titles.
-        foreach ($nodes as $commande) {
-            $pv = $commande->field_total_achat->value  ;
-            $sum  = $sum  + floatval($pv) ;
-                        
-        }
-        return ($sum);
-       }
        function getDaysList(){
                     // Get the current year and month
             $currentYear = date('Y');
@@ -269,45 +191,114 @@ class ServiceRapport
                 'achat' => $final_achat
             ];
        }
-       function venteParMois(){
-        // Get the current date.
+       function getBeneficeParJour(){
+
         $current_date = \Drupal::service('datetime.time')->getCurrentTime();
+        $day = date('Y-m-d', $current_date);
+       // $day = "2024-10-15";
+        //kint($day);
+    
+        // Start the select query from node_field_data.
+        $query = Database::getConnection()->select('node_field_data', 'nfd');
 
-        // Get the first and last day of the current month.
-        $first_day_of_month = strtotime('first day of this month', $current_date);
+        // Join field table for 'field_date' and 'field_status' (assuming they are fieldable entity fields).
+        $query->join('node__field_date', 'fd', 'nfd.nid = fd.entity_id');
+        $query->join('node__field_status', 'fs', 'nfd.nid = fs.entity_id');
+        $query->join('node__field_total_vente', 'tt', 'nfd.nid = tt.entity_id');
+        $query->join('node__field_total_achat', 'ta', 'nfd.nid = ta.entity_id');
 
-        $entity_query = \Drupal::entityQuery('node');
-        // Query for article nodes.
-        $nids = $entity_query->condition('type', 'commande')
-        ->condition('field_date',$first_day_of_month, '>=')
-        ->condition('field_status','payed', '=')
-        ->execute();     
-            // Load the nodes.
-        $nodes = \Drupal\node\Entity\Node::loadMultiple($nids);
-        $resultat=[];
-        // Output the node titles.
-        foreach ($nodes as $commande) {
-            if(!isset($resultat[$commande->field_date->value])){$resultat[$commande->field_date->value] = 0 ;}
-            $resultat[$commande->field_date->value] = $resultat[$commande->field_date->value] + $commande->field_total_vente->value ;              
+        $query->addExpression('SUM(tt.field_total_vente_value) - SUM(ta.field_total_achat_value)', 'benefice'); // Sum of quantities.
+        
+        // Add conditions.
+        $query->condition('nfd.type', 'commande');  // Filter by content type 'commande'.
+        $query->condition('fd.field_date_value', $day, '=');  // Filter by date range.
+        $query->condition('fs.field_status_value', 'payed');  // Only nodes with status 'payed'.
+        // Select the fields you need (node ID in this case).
+      //  $query->fields('nfd', ['nid']);
+      //  $query->fields('tt', ['field_total_vente_value']);
+
+        // Execute the query.
+        $result = $query->execute();
+        // Fetch the node IDs.
+        $sum =  $result->fetchAll();
+        if(!empty( $sum)){
+          return  $sum[0]->benefice;
         }
-        $days = $this->getDaysList();
-        $final_vente = [];
-        foreach ($days as $day) {
-            if(!isset($resultat[$day])){
-                $final_vente[$day] = 0 ;
-            }else{
-                $final_vente[$day] = $resultat[$day];
-            }
+        return 0 ;
+}
+       function getTotalVenteParJour(){
 
-        }
-        return $final_vente;
-   }
+                $current_date = \Drupal::service('datetime.time')->getCurrentTime();
+                $day = date('Y-m-d', $current_date);
+             //   $day = "2024-10-15";
+              //  kint($day);
+            
+                // Start the select query from node_field_data.
+                $query = Database::getConnection()->select('node_field_data', 'nfd');
+
+                // Join field table for 'field_date' and 'field_status' (assuming they are fieldable entity fields).
+                $query->join('node__field_date', 'fd', 'nfd.nid = fd.entity_id');
+                $query->join('node__field_status', 'fs', 'nfd.nid = fs.entity_id');
+                $query->join('node__field_total_vente', 'tt', 'nfd.nid = tt.entity_id');
+                $query->addExpression('SUM(tt.field_total_vente_value)', 'total_vente'); // Sum of quantities.
+
+                // Add conditions.
+                $query->condition('nfd.type', 'commande');  // Filter by content type 'commande'.
+                $query->condition('fd.field_date_value', $day, '=');  // Filter by date range.
+                $query->condition('fs.field_status_value', 'payed');  // Only nodes with status 'payed'.
+                // Select the fields you need (node ID in this case).
+              //  $query->fields('nfd', ['nid']);
+              //  $query->fields('tt', ['field_total_vente_value']);
+
+                // Execute the query.
+                $result = $query->execute();
+                // Fetch the node IDs.
+                $sum =  $result->fetchAll();
+                if(!empty( $sum)){
+                  return  $sum[0]->total_vente;
+                }
+                return 0 ;
+       }
+       function getVenteParMois(){
+
+            $current_date = \Drupal::service('datetime.time')->getCurrentTime();
+            $first_day_of_month = date('Y-m-d 00:00:00', strtotime('first day of this month', $current_date));
+            $last_day_of_month = date('Y-m-d 23:59:59', strtotime('last day of this month', $current_date));
+       
+            // Start the select query from node_field_data.
+            $query = Database::getConnection()->select('node_field_data', 'nfd');
+
+            // Join field table for 'field_date' and 'field_status' (assuming they are fieldable entity fields).
+            $query->join('node__field_date', 'fd', 'nfd.nid = fd.entity_id');
+            $query->join('node__field_status', 'fs', 'nfd.nid = fs.entity_id');
+            $query->join('node__field_total_vente', 'tt', 'nfd.nid = tt.entity_id');
+
+            // Add conditions.
+            $query->condition('nfd.type', 'commande');  // Filter by content type 'commande'.
+            $query->condition('fd.field_date_value', [$first_day_of_month, $last_day_of_month], 'BETWEEN');  // Filter by date range.
+            $query->condition('fs.field_status_value', 'payed');  // Only nodes with status 'payed'.
+
+           // $query->range(0,10000);  // Only nodes with status 'payed'.
+
+
+            // Select the fields you need (node ID in this case).
+            $query->fields('nfd', ['nid']);
+            $query->fields('tt', ['field_total_vente_value']);
+            $query->fields('fd', ['field_date_value']);
+
+            // Execute the query.
+            $result = $query->execute();
+
+            // Fetch the node IDs.
+            return $result->fetchAllAssoc('nid');
+       }
+  
        function dateProche(){
                 // Get the current timestamp
             $currentTimestamp = time();
 
             // Calculate the timestamp for 5 days ago
-            $fiveDaysAgoTimestamp = strtotime('-5 days', $currentTimestamp);
+            $fiveDaysAgoTimestamp = strtotime('-10 days', $currentTimestamp);
 
             // Convert the timestamp to a DrupalDateTime object
             $fiveDaysAgoDateTime = new DrupalDateTime('@' . $fiveDaysAgoTimestamp);
