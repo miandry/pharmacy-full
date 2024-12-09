@@ -70,12 +70,24 @@ class ServiceRapport
             // Fetch the results as an associative array.
             return $result->fetchAllAssoc('id');
        }
-       function getQueryTopVenteArticleParMois(){
+       function getQueryTopVenteArticleParMois($dates = null ){
 
-                 
-        $current_date = \Drupal::service('datetime.time')->getCurrentTime();
-        $first_day_of_month = date('Y-m-d 00:00:00', strtotime('first day of this month', $current_date));
-        $last_day_of_month = date('Y-m-d 23:59:59', strtotime('last day of this month', $current_date));
+        $date_start = $dates['date_start'] ;        
+        $date_end = $dates['date_end'];  
+
+        if(isset($dates['date_start'])|| isset($dates['date_end']) ){
+            $first_day_of_month = $dates['date_start'];
+            $last_day_of_month = $dates['date_end'];
+        }else{
+            $current_date = \Drupal::service('datetime.time')->getCurrentTime();
+            $first_day_of_month = date('Y-m-d 00:00:00', strtotime('first day of this month', $current_date));
+            $last_day_of_month = date('Y-m-d 23:59:59', strtotime('last day of this month', $current_date));
+
+        }
+        
+
+
+
     
 
                 // Step 1: Build the database query on 'node_field_data' table.

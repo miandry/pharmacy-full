@@ -43,5 +43,10 @@ function dashboard_theme($existing, $type, $theme, $path) {
       'render element' => 'form',
       'template' => 'dashboard-form-template',
     ],
+    'dashboard_topvente' => [
+      'variables' => [
+        'items' => NULL,
+      ],
+    ],
   ];
 }

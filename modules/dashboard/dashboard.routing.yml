@@ -5,3 +5,11 @@ dashboard.execute:
     _title: 'BatchDashboardForm Form'
   requirements:
     _permission: 'access content'
+
+dashboard.default_controller_topvente:
+  path: '/admin/dashboard/topvente'
+  defaults:
+    _controller: '\Drupal\dashboard\Controller\DefaultController::topvente'
+    _title: 'topvente'
+  requirements:
+    _permission: 'access content'
