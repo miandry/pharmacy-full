@@ -70,22 +70,29 @@ class ServiceRapport
             // Fetch the results as an associative array.
             return $result->fetchAllAssoc('id');
        }
+       function defaultFilterTopVenteArticle(){
+        $current_date = \Drupal::service('datetime.time')->getCurrentTime();
+        $first_day_of_month = date('Y-m-d 00:00:00', strtotime('first day of this month', $current_date));
+        $last_day_of_month = date('Y-m-d 23:59:59', strtotime('last day of this month', $current_date));
+        return [
+            'date_start' =>        $first_day_of_month,
+            'date_end' =>   $last_day_of_month
+        ];
+       }
        function getQueryTopVenteArticleParDate($dates = null ){
 
         $date_start = $dates['date_start'] ;        
         $date_end = $dates['date_end'];  
-
-        if(isset($dates['date_start'])|| isset($dates['date_end']) ){
-            $first_day_of_month = $dates['date_start'];
-            $last_day_of_month = $dates['date_end'];
-        }else{
-            $current_date = \Drupal::service('datetime.time')->getCurrentTime();
-            $first_day_of_month = date('Y-m-d 00:00:00', strtotime('first day of this month', $current_date));
-            $last_day_of_month = date('Y-m-d 23:59:59', strtotime('last day of this month', $current_date));
-
-        }
+        $current_date = \Drupal::service('datetime.time')->getCurrentTime();
+        $first_day_of_month = date('Y-m-d 00:00:00', strtotime('first day of this month', $current_date));
+        $last_day_of_month = date('Y-m-d 23:59:59', strtotime('last day of this month', $current_date));
         
-
+        if(isset($dates['date_start'])){
+            $first_day_of_month = $dates['date_start'];
+        }
+        if(isset($dates['date_end']) ){
+            $last_day_of_month = $dates['date_end'];
+        }
                 // Step 1: Build the database query on 'node_field_data' table.
                 $query = Database::getConnection()->select('node_field_data', 'nfd');
 
@@ -96,7 +103,7 @@ class ServiceRapport
                 $query->join('paragraph__field_article', 'pra', 'pq.entity_id = pra.entity_id');
                 $query->join('node__field_date', 'date', 'nfd.nid = date.entity_id ');
 
-                $query->range(0,10);
+        
                 // Add conditions to filter the right nodes.
                 $query->condition('nfd.type', 'commande');  // Filter by content type 'commande'.
                 //$query->condition('nfd.status', 1);  // Only published nodes.
@@ -154,7 +161,7 @@ class ServiceRapport
                 $query->join('paragraph__field_article', 'pra', 'pq.entity_id = pra.entity_id');
                 $query->join('node__field_date', 'date', 'nfd.nid = date.entity_id ');
 
-                $query->range(0,10);
+
                 // Add conditions to filter the right nodes.
                 $query->condition('nfd.type', 'commande');  // Filter by content type 'commande'.
                 //$query->condition('nfd.status', 1);  // Only published nodes.
