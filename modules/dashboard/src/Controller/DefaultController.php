@@ -20,9 +20,6 @@ class DefaultController extends ControllerBase {
     $service_helper = \Drupal::service('drupal.helper');
     $params = $service_helper->helper->get_parameter();
     $items = $service->getQueryTopVenteArticleParMois( $params);
-
-    die();
- 
     return [
       '#theme' => 'dashboard_topvente', // The theme hook defined in hook_theme.
       '#items' => $items,

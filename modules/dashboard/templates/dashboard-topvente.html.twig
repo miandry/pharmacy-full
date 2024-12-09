@@ -18,21 +18,22 @@
 	<thead>
 		<tr>
 			<th>Item ID</th>
-			<th>Item Name</th>
-			<th>Item Price</th>
+			<th>Nom article</th>
+			<th>Total quantite vendu</th>
+            <th>Nombre achat article </th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
-			<td>1</td>
-			<td>Item 1</td>
-			<td>$1</td>
-		</tr>
-		<tr>
-			<td>2</td>
-			<td>Item 2</td>
-			<td>$2</td>
-		</tr>
+        {% for item in items %}
+          <tr>
+            <td>{{item.article_nid}}</td>
+			<td>{{item.title}}</td>
+			<td>{{item.total_quantity}}</td>
+            <td>{{item.repeat_count}}</td>
+		  </tr>
+
+    {% endfor %}
+	
 	</tbody>
 </table>
 
