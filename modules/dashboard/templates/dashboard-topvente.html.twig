@@ -2,25 +2,32 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.css">
 {% set myfilter =  items.filter  %}
-<form>
-  <div class="mb-3">
+<form class="row">
+  <div class="mb-3 col-2">
     <label for="exampleInputEmail1" class="form-label">Date start</label>
     <input type="text" class="form-control" value="{{myfilter.date_start}}" name="date_start" id="exampleInputEmail1" aria-describedby="emailHelp">
   </div>
-    <div class="mb-3">
+ <div class="mb-3 col-2">
     <label for="exampleInputEmail1" class="form-label">Date end</label>
-    <input type="text" class="form-control" name="date_end" value="{{myfilter.date_start}}" id="exampleInputEmail1" aria-describedby="emailHelp">
+    <input type="text" class="form-control" name="date_end" value="{{myfilter.date_end}}" id="exampleInputEmail1" aria-describedby="emailHelp">
   </div>
-  <button type="submit" class="btn btn-primary">Recherche</button>
+   <div class="mb-3 col-2">
+    <label for="exampleInputEmail1" class="form-label">Article Id</label>
+    <input type="text" class="form-control"  value="{{myfilter.article_id}}" name="article_id" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+   <div class="mb-3">
+  <button type="submit" class="btn btn-primary col-4">Recherche</button>
+  </div>
 </form>
 
 <table data-toggle="table">
 	<thead>
 		<tr>
-			<th>Item ID</th>
+			<th>Article ID</th>
 			<th>Nom article</th>
 			<th>Total quantite vendu</th>
-            <th>Nombre achat article </th>
+            <th>Total montant (AR) </th>
+            <th>Nombre des article vendus </th>
 		</tr>
 	</thead>
 	<tbody>
@@ -29,6 +36,7 @@
             <td>{{item.article_nid}}</td>
 			<td>{{item.title}}</td>
 			<td>{{item.total_quantity}}</td>
+             <td>{{item.total_vente}}</td>
             <td>{{item.repeat_count}}</td>
 		  </tr>
 

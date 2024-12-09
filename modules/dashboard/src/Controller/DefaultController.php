@@ -27,7 +27,7 @@ class DefaultController extends ControllerBase {
     if(isset($params['date_end'])){
       $filter['date_end'] = $params['date_end'];
     }
-    $items = $service->getQueryTopVenteArticleParMois( $params);
+    $items = $service->getQueryTopVenteArticleParDate( $params);
     return [
       '#theme' => 'dashboard_topvente', // The theme hook defined in hook_theme.
       '#items' => ['data' => $items , 'filter' =>   $filter ],

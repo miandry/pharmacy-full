@@ -72,8 +72,8 @@ class ServiceRapport
        }
        function defaultFilterTopVenteArticle(){
         $current_date = \Drupal::service('datetime.time')->getCurrentTime();
-        $first_day_of_month = date('Y-m-d 00:00:00', strtotime('first day of this month', $current_date));
-        $last_day_of_month = date('Y-m-d 23:59:59', strtotime('last day of this month', $current_date));
+        $first_day_of_month = date('Y-m-d', strtotime('first day of this month', $current_date));
+        $last_day_of_month = date('Y-m-d', strtotime('last day of this month', $current_date));
         return [
             'date_start' =>        $first_day_of_month,
             'date_end' =>   $last_day_of_month
@@ -81,16 +81,14 @@ class ServiceRapport
        }
        function getQueryTopVenteArticleParDate($dates = null ){
 
-        $date_start = $dates['date_start'] ;        
-        $date_end = $dates['date_end'];  
         $current_date = \Drupal::service('datetime.time')->getCurrentTime();
-        $first_day_of_month = date('Y-m-d 00:00:00', strtotime('first day of this month', $current_date));
-        $last_day_of_month = date('Y-m-d 23:59:59', strtotime('last day of this month', $current_date));
+        $first_day_of_month = date('Y-m-d', strtotime('first day of this month', $current_date));
+        $last_day_of_month = date('Y-m-d', strtotime('last day of this month', $current_date));
         
-        if(isset($dates['date_start'])){
+        if(isset($dates['date_start'])  &&  $dates['date_start'] !=''){
             $first_day_of_month = $dates['date_start'];
         }
-        if(isset($dates['date_end']) ){
+        if(isset($dates['date_end'])  &&  $dates['date_end'] !='' ){
             $last_day_of_month = $dates['date_end'];
         }
                 // Step 1: Build the database query on 'node_field_data' table.
@@ -102,19 +100,25 @@ class ServiceRapport
                 // Join the paragraph table for 'field_article' (referenced article).
                 $query->join('paragraph__field_article', 'pra', 'pq.entity_id = pra.entity_id');
                 $query->join('node__field_date', 'date', 'nfd.nid = date.entity_id ');
-
-        
+                $query->join('paragraph__field_prix_unitaire', 'pu', 'nfd.nid = pu.entity_id ');
+      
                 // Add conditions to filter the right nodes.
                 $query->condition('nfd.type', 'commande');  // Filter by content type 'commande'.
                 //$query->condition('nfd.status', 1);  // Only published nodes.
                 $query->condition('date.field_date_value', [$first_day_of_month, $last_day_of_month], 'BETWEEN');
-
+                if(isset( $dates['article_id']) &&  $dates['article_id'] !=''){
+                    $query->condition('pra.field_article_target_id', $dates['article_id']);
+                }
+  
                 // Group by the referenced article ID.
                 $query->groupBy('pra.field_article_target_id');
 
                 // Select the fields.
+
                 $query->addField('pra', 'field_article_target_id', 'article_nid'); // Article ID as 'article_nid'.
                 $query->addExpression('SUM(pq.field_quantite_value)', 'total_quantity'); // Sum of quantities.
+                $query->addExpression('SUM(pq.field_quantite_value * pu.field_prix_unitaire_value)', 'total_vente'); // Sum of quantities.
+             
                 // Add an expression to count the number of articles (distinct).
                 $query->addExpression('COUNT(pq.entity_id)', 'repeat_count'); // Count occurrences of the same article.
 
@@ -125,18 +129,20 @@ class ServiceRapport
                 $query->range(0, 50);
                 // Execute the query.
                 $result = $query->execute();
+         
                 // Fetch the results as an associative array.
                 $rows = array_values($result->fetchAll());
                 $items = [];
                 if(!empty($rows)){
                     $service = \Drupal::service('entity_parser.manager');
                     foreach($rows as $r){
-                        $article = $service->node_parser($r["article_nid"]);
+                        $article = $service->node_parser($r->article_nid);
                         $items[] = [
                             'title' => $article['title'],
-                            'article_nid' => $r['article_nid'],   
-                            'total_quantity' => $r['total_quantity'],
-                            'repeat_count' => $r['repeat_count'],      
+                            'article_nid' => $r->article_nid,   
+                            'total_quantity' => $r->total_quantity,
+                            'repeat_count' => $r->repeat_count,    
+                            'total_vente' => $r->total_vente,      
                         ];                 
                     }
                 }

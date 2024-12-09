@@ -10,6 +10,6 @@ dashboard.default_controller_topvente:
   path: '/admin/dashboard/topvente'
   defaults:
     _controller: '\Drupal\dashboard\Controller\DefaultController::topvente'
-    _title: 'topvente'
+    _title: '50 articles Top vente par date'
   requirements:
     _permission: 'access content'
