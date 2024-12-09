@@ -115,13 +115,25 @@ class ServiceRapport
                 $query->orderBy('total_quantity', 'DESC');
 
                 // Limit the query to the top 5 results.
-                $query->range(0, 1000);
-
+                $query->range(0, 50);
                 // Execute the query.
                 $result = $query->execute();
-
                 // Fetch the results as an associative array.
-                return array_values($result->fetchAll());
+                $rows = array_values($result->fetchAll());
+                $items = [];
+                if(!empty($rows)){
+                    $service = \Drupal::service('entity_parser.manager');
+                    foreach($rows as $r){
+                        $article = $service->node_parser($r["article_nid"]);
+                        $items[] = [
+                            'title' => $article['title'],
+                            'article_nid' => $r['article_nid'],   
+                            'total_quantity' => $r['total_quantity'],
+                            'repeat_count' => $r['repeat_count'],      
+                        ];                 
+                    }
+                }
+                return  $items ;
 
 
 
