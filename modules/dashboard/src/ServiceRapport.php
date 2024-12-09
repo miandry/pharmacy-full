@@ -115,7 +115,7 @@ class ServiceRapport
                 $query->orderBy('total_quantity', 'DESC');
 
                 // Limit the query to the top 5 results.
-                $query->range(0, 5);
+                $query->range(0, 1000);
 
                 // Execute the query.
                 $result = $query->execute();
