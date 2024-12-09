@@ -70,7 +70,7 @@ class ServiceRapport
             // Fetch the results as an associative array.
             return $result->fetchAllAssoc('id');
        }
-       function getQueryTopVenteArticleParMois($dates = null ){
+       function getQueryTopVenteArticleParDate($dates = null ){
 
         $date_start = $dates['date_start'] ;        
         $date_end = $dates['date_end'];  
@@ -86,9 +86,49 @@ class ServiceRapport
         }
         
 
+                // Step 1: Build the database query on 'node_field_data' table.
+                $query = Database::getConnection()->select('node_field_data', 'nfd');
+
+                // Join the paragraph table for 'field_quantite' (quantity of articles).
+                $query->join('paragraph__field_quantite', 'pq', 'nfd.nid = pq.entity_id');
+
+                // Join the paragraph table for 'field_article' (referenced article).
+                $query->join('paragraph__field_article', 'pra', 'pq.entity_id = pra.entity_id');
+                $query->join('node__field_date', 'date', 'nfd.nid = date.entity_id ');
+
+                $query->range(0,10);
+                // Add conditions to filter the right nodes.
+                $query->condition('nfd.type', 'commande');  // Filter by content type 'commande'.
+                //$query->condition('nfd.status', 1);  // Only published nodes.
+                $query->condition('date.field_date_value', [$first_day_of_month, $last_day_of_month], 'BETWEEN');
+
+                // Group by the referenced article ID.
+                $query->groupBy('pra.field_article_target_id');
+
+                // Select the fields.
+                $query->addField('pra', 'field_article_target_id', 'article_nid'); // Article ID as 'article_nid'.
+                $query->addExpression('SUM(pq.field_quantite_value)', 'total_quantity'); // Sum of quantities.
+
+                // Order by the total quantity sold in descending order.
+                $query->orderBy('total_quantity', 'DESC');
+
+                // Limit the query to the top 5 results.
+                $query->range(0, 5);
+
+                // Execute the query.
+                $result = $query->execute();
+
+                // Fetch the results as an associative array.
+                return array_values($result->fetchAll());
 
 
-    
+
+       }
+       function getQueryTopVenteArticleParMois(){
+
+            $current_date = \Drupal::service('datetime.time')->getCurrentTime();
+            $first_day_of_month = date('Y-m-d 00:00:00', strtotime('first day of this month', $current_date));
+            $last_day_of_month = date('Y-m-d 23:59:59', strtotime('last day of this month', $current_date));  
 
                 // Step 1: Build the database query on 'node_field_data' table.
                 $query = Database::getConnection()->select('node_field_data', 'nfd');
