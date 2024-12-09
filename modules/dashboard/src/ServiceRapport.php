@@ -108,6 +108,8 @@ class ServiceRapport
                 // Select the fields.
                 $query->addField('pra', 'field_article_target_id', 'article_nid'); // Article ID as 'article_nid'.
                 $query->addExpression('SUM(pq.field_quantite_value)', 'total_quantity'); // Sum of quantities.
+                // Add an expression to count the number of articles (distinct).
+                $query->addExpression('COUNT(DISTINCT pra.field_article_target_id)', 'article_count'); // Count distinct articles.
 
                 // Order by the total quantity sold in descending order.
                 $query->orderBy('total_quantity', 'DESC');
