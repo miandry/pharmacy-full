@@ -79,7 +79,23 @@ class ServiceRapport
             'date_end' =>   $last_day_of_month
         ];
        }
+       function verifyDatesInterval($startDate,$endDate){
+        // Create DateTime objects
+            $date1 = \DateTime::createFromFormat('Y-m-d', $startDate);
+            $date2 = \DateTime::createFromFormat('Y-m-d', $endDate);
+            // Calculate the difference
+            $interval = $date1->diff($date2);
+            // Check if the difference is less than 30 days
+            if ($interval->days > 32) {
+                $message =  "The difference is 31 days or more";
+                \Drupal::messenger()->addMessage( $message , 'error');
+                return false ;
+            }
+            return  true ;
+       }
        function getQueryTopVenteArticleParDate($dates = null ){
+
+    
 
         $current_date = \Drupal::service('datetime.time')->getCurrentTime();
         $first_day_of_month = date('Y-m-d', strtotime('first day of this month', $current_date));
@@ -91,6 +107,15 @@ class ServiceRapport
         if(isset($dates['date_end'])  &&  $dates['date_end'] !='' ){
             $last_day_of_month = $dates['date_end'];
         }
+        if(isset($dates['date_start'])  &&  $dates['date_start'] !='' && 
+           isset($dates['date_end'])  &&  $dates['date_end'] !=''){
+            $status =$this->verifyDatesInterval($dates['date_start'], $dates['date_end']);
+            if($status === false ){
+               return false ;
+            }
+        }
+
+
                 // Step 1: Build the database query on 'node_field_data' table.
                 $query = Database::getConnection()->select('node_field_data', 'nfd');
 
@@ -126,7 +151,7 @@ class ServiceRapport
                 $query->orderBy('total_quantity', 'DESC');
 
                 // Limit the query to the top 5 results.
-                $query->range(0, 50);
+               // $query->range(0, 50);
                 // Execute the query.
                 $result = $query->execute();
          
@@ -137,13 +162,15 @@ class ServiceRapport
                     $service = \Drupal::service('entity_parser.manager');
                     foreach($rows as $r){
                         $article = $service->node_parser($r->article_nid);
-                        $items[] = [
-                            'title' => $article['title'],
-                            'article_nid' => $r->article_nid,   
-                            'total_quantity' => $r->total_quantity,
-                            'repeat_count' => $r->repeat_count,    
-                            'total_vente' => $r->total_vente,      
-                        ];                 
+                        if(isset($article['title'])){
+                            $items[] = [
+                                'title' => $article['title'],
+                                'article_nid' => $r->article_nid,   
+                                'total_quantity' => $r->total_quantity,
+                                'repeat_count' => $r->repeat_count,    
+                                'total_vente' => $r->total_vente,      
+                            ]; 
+                        }                
                     }
                 }
                 return  $items ;
