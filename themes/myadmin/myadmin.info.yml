@@ -1,9 +1,8 @@
-name: 'myadmin'
+name: myadmin
 type: theme
-base theme: gin
-description: 'Admin Theme'
-core_version_requirement: ^8.8 || ^9
-package: 'Default'
-regions:
-  content: Content
-  hidden: 'Hidden'
+description: 'Drupal 9 theme with Vue 3 + Vite (App.vue integration)'
+core_version_requirement: ^9 || ^10
+base theme: claro
+package: Custom
+libraries:
+  - myadmin/global

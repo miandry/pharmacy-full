@@ -1,61 +1,18 @@
-bootstrap_css:
-  css:
-    theme:
-      vendor/bootstrap/css/bootstrap.min.css: {}
-
-bootstrap_full:
-  css:
-    theme:
-      vendor/bootstrap/css/bootstrap.min.css: {}
+global:
   js:
-    vendor/popper/popper.min.js: {}
-    vendor/bootstrap/js/bootstrap.min.js: {}
+    dist/app.js: {}
+  css:
+    theme:
+      css/style.css: {}
+      dist/assets/main.css: {}
   dependencies:
-    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - themeVue/tailwindcss
 
-jquery_confirm:
+tailwindcss:
   header: true
-  css:
-    theme:
-      vendor/jquery-confirm/dist/jquery-confirm.min.css: {}
   js:
-    vendor/jquery-confirm/dist/jquery-confirm.min.js: {}: {}  
-  dependencies:
-    - core/jquery
+    https://cdn.tailwindcss.com/3.4.16: { type: external }
+    dist/tailwind.config.js: {}
 
-bootstrap_table:
-  header: true
-  css:
-    theme:
-      vendor/bootstrap-table-master/dist/bootstrap-table.css: {}
-  js:
-    vendor/bootstrap-table-master/dist/bootstrap-table.js: {}
-  dependencies:
-    - myadmin/bootstrap_full
-
-commande_js:
-  js:
-    js/commande.js: {}
-  dependencies:
-    - myadmin/bootstrap_table
-icon_awesome:
-  css:
-    theme:
-      https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css: {type: external,minified: true } 
-
-icon_bootstrap:
-  css:
-    theme:
-      https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css: {type: external,minified: true }    
-
-
-lib_dashboard:
-  header: true
-  css:
-    theme:
-      https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700: {type: external,minified: true }
-      https://fonts.googleapis.com/icon?family=Material+Icons+Round: {type: external,minified: true }  
-      css/material-dashboard.min.css: {}       
-  js:
-    https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js:  {type: external,minified: true }
-    js/material-dashboard.min.js: {}    

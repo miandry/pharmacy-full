@@ -1,29 +1,34 @@
 <?php
+
+use Drupal\node\Entity\Node;
+
 /**
  * Implements hook_preprocess_HOOK() for page templates.
  */
-function myadmin_preprocess_html(&$variables) {
-  // Get the current path.
-  $current_path = \Drupal::service('path.current')->getPath();
-  $current_path_alias = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
-  if ($current_path_alias == '/frontdesk') {
-      $variables['#cache']['max-age'] = 0;
-      $service = \Drupal::service('commande_management.manager');
-      $saved = $service->saveCommandes();
-      if($saved){
-        $variables['saved'] = $saved ;
-      }
-  }
-  if ($current_path_alias == '/invoice' || $current_path_alias == '/ticket') {
-    $variables['#cache']['max-age'] = 0;
-  }
-  if (strpos($current_path_alias, "/commande/") !== false) {
-    $variables['#cache']['max-age'] = 0;
-    $service = \Drupal::service('commande_management.manager');
-    $node = \Drupal::routeMatch()->getParameter('node');
-    $saved = $service->savePaymentCommande($node->id());
-  }
+function myadmin_preprocess_page(&$variables) {
+  // Charger les 5 derniers articles publiés
+  // $nids = \Drupal::entityQuery('node')
+  //   ->condition('type', 'cart')
+  //   ->range(0, 5)
+  //   ->sort('created', 'DESC')
+  //   ->execute();
 
+  // $nodes = Node::loadMultiple($nids);
+  // $articles = [];
+  // foreach ($nodes as $node) {
+  //   $articles[] = [
+  //     'id' => $node->id(),
+  //     'title' => $node->getTitle(),
+  //     'created' => \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'short'),
+  //   ];
+  // }
+  // // Injecter dans drupalSettings
+  // $variables['#attached']['drupalSettings']['vueArticles'] = $articles;
+
+
+  $menu = [
+    [ "name" => "Caisse", "url" => "/"],
+    [ "name" => "Clients", "url" => "/clients"],
+  ];
+  $variables['#attached']['drupalSettings']['menu'] = $menu;
 }
-
-
