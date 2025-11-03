@@ -8,7 +8,7 @@
             <div class="mb-3 p-2 bg-gray-50 rounded-lg">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-medium text-gray-700">Client</span>
-                    <button class="text-xs text-primary hover:underline" id="change-customer">Changer</button>
+                    <button class="text-xs text-primary hover:underline" @click="$emit('open-customer-modal')">Changer</button>
                 </div>
                 <div class="flex items-center space-x-2 mb-2" id="customer-info">
                     <div
@@ -116,9 +116,9 @@
                     <span class="font-medium text-secondary" id="change-due">5,160 Ar</span>
                 </div>
             </div>
-            <button
+            <button 
                 class="w-full py-2 bg-secondary hover:bg-green-600 text-white !rounded-button font-semibold text-sm whitespace-nowrap"
-                id="finalize-sale">
+                @click="$emit('open-payment-modal')">
                 Finaliser la vente
             </button>
         </div>
@@ -127,7 +127,7 @@
 
 <script>
 export default {
-
+    name: 'CardSidebar',
 }
 </script>
 
