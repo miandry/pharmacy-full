@@ -25,8 +25,8 @@ export default {
     const articles = ref([]);         // Holds the fetched data
     // Fetch data when the component is mounted
     onMounted(() => {
-         articles.value = (window.drupalSettings?.vueArticles || []);
-         console.log("ok Articles");
+        /// articles.value = (window.drupalSettings?.vueArticles || []);
+        // console.log(dataDrupal);
     });
 
     return {
