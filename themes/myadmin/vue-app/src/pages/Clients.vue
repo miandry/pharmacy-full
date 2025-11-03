@@ -1,20 +1,19 @@
 <template>
-  <div>
-    <h2>Clients</h2>
-    <ul>
-      <li v-for="a in articles" :key="a.id">
-        {{ a.title }} <small>({{ a.created }})</small>
-      </li>
-    </ul>
-  </div>
+  <div class="p-4 md:p-6">
+    <rapportClients/>
+    <tableClients/>
+  </div>  
 </template>
-
 <script>
 import { ref, onMounted } from 'vue';
-console.log("Component loaded")
-
+import rapportClients from '../components/clients/rapportClients.vue'
+import tableClients from '../components/clients/tableClients.vue'
 export default {
-  name: 'About',
+  name: 'Clients',
+    components: {
+    rapportClients,
+    tableClients
+    },
     computed: {
     transId() {
       // Access the route parameter (e.g., id)
