@@ -18,9 +18,6 @@
           <h1 class="text-xl md:text-2xl font-['Pacifico'] text-primary">
             Clinic Vonjy Aina
           </h1>
-          <span class="store-name">
-            My Store
-          </span>
         </div>
         
         <button 

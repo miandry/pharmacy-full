@@ -6,19 +6,15 @@
           Clinic Vonjy Aina
         </h1>
         <nav class="hidden lg:flex space-x-1">
-          <router-link
-            v-for="a in menu"
-            :key="a.id"
-            :to="a.url"
-            class="px-4 xl:px-6 py-3 !rounded-button whitespace-nowrap font-medium text-sm xl:text-base"
-            :class="[
-              $route.path === a.url
-                ? 'bg-primary text-white'
-                : 'text-gray-600 hover:text-primary hover:bg-gray-50',
-            ]"
-          >
-            {{ a.name }}
-          </router-link>
+           <router-link
+          v-for="menuItem in menuItems"
+          :key="menuItem.id"
+          :to="menuItem.path"
+          class="menu-item"
+          :class="getMenuItemClass(menuItem.path)"
+        >
+            {{ menuItem.name }}
+        </router-link>
         </nav>
       </div>
       <div class="hidden md:flex items-center space-x-2 md:space-x-4">
@@ -39,7 +35,6 @@
       <h1 class="text-xl md:text-2xl font-['Pacifico'] text-primary">
         Clinic Vonjy Aina
       </h1>
-      <span class="store-name"> My Store </span>
     </div>
 
     <!-- Menu Toggle Button -->
@@ -59,12 +54,28 @@ export default {
 
   // Define events this component emits
   emits: ["toggle-menu"],
+    
+  data() {
+    return {
+      // Menu configuration - easily customizable
+      menuItems: mydata.menu
+    }
+  },
 
   methods: {
     // Emit event to parent to toggle menu
     emitToggleMenu() {
       this.$emit("toggle-menu");
     },
+       // Determine CSS classes for menu item based on current route
+    getMenuItemClass(itemPath) {
+      const isActive = this.$route.path === itemPath
+      
+      return {
+        'px-4 xl:px-6 py-3 bg-primary text-white !rounded-button whitespace-nowrap font-medium text-sm xl:text-base cursor-pointer': isActive,
+        'px-4 xl:px-6 py-3 text-gray-600 hover:text-primary hover:bg-gray-50 !rounded-button whitespace-nowrap font-medium text-sm xl:text-base cursor-pointer': !isActive
+      }
+    }
   },
 };
 </script>
