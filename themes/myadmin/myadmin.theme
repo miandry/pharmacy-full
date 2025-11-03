@@ -24,11 +24,17 @@ function myadmin_preprocess_page(&$variables) {
   // }
   // // Injecter dans drupalSettings
   // $variables['#attached']['drupalSettings']['vueArticles'] = $articles;
-
-
+  $current_user = \Drupal::currentUser();
+  $data = [
+    'isLoggedIn' => $current_user->isAuthenticated(), // TRUE ou FALSE
+    'uid' => $current_user->id(),
+    'username' => $current_user->getAccountName(),
+    'baseUrl' => Url::fromRoute('<front>', [], ['absolute' => TRUE])->toString(),
+  ];
   $menu = [
     [ "name" => "Caisse", "url" => "/"],
     [ "name" => "Clients", "url" => "/clients"],
   ];
+  
   $variables['#attached']['drupalSettings']['menu'] = $menu;
 }
