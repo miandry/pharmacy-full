@@ -24,11 +24,11 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import ProductGrid from '../components/ProductGrid.vue'
-import CartSidebar from '../components/CartSidebar.vue'
-import CustomerModal from '../components/CustomerModal.vue'
-import AddCustomerModal from '../components/AddCustomerModal.vue'
-import PaymentModal from '../components/PaymentModal.vue'
+import ProductGrid from '../components/caisses/ProductGrid.vue'
+import CartSidebar from '../components/caisses/CartSidebar.vue'
+import CustomerModal from '../components/caisses/CustomerModal.vue'
+import AddCustomerModal from '../components/caisses/AddCustomerModal.vue'
+import PaymentModal from '../components/caisses/PaymentModal.vue'
 
 export default {
   name: 'Caisse',
