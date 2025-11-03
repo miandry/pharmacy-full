@@ -8,7 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Add Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
       rel="stylesheet"
@@ -18,7 +21,9 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
     />
     <style>
-      :where([class^="ri-"])::before { content: "\f3c2"; }
+      :where([class^="ri-"])::before {
+        content: "\f3c2";
+      }
     </style>
     <script>
       tailwind.config = {
@@ -47,7 +52,19 @@
     <script type="module" src="/src/main.js"></script>
   </head>
   <body class="bg-gray-50 min-h-screen">
-    <script>   var mydata =  (window.drupalSettings?.data || []);  </script>
+    <script>
+      var mydata = []; // static var
+      mydata.menu = [
+        { id: 1, name: "Dashboard", path: "/", icon: "fas fa-home" },
+        {
+          id: 2,
+          name: "Caisses",
+          path: "/caisses",
+          icon: "fas fa-shopping-cart",
+        },
+        { id: 4, name: "Customers", path: "/clients", icon: "fas fa-users" }
+      ];
+    </script>
     <div id="vue-app"></div>
   </body>
 </html>
