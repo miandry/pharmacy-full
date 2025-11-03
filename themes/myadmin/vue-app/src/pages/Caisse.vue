@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
 import ProductGrid from '../components/ProductGrid.vue'
 import CartSidebar from '../components/CartSidebar.vue'
 
