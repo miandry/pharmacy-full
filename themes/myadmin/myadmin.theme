@@ -1,6 +1,8 @@
 <?php
 
 use Drupal\node\Entity\Node;
+use Drupal\Core\Url;
+
 
 /**
  * Implements hook_preprocess_HOOK() for page templates.
@@ -30,11 +32,11 @@ function myadmin_preprocess_page(&$variables) {
     'uid' => $current_user->id(),
     'username' => $current_user->getAccountName(),
     'baseUrl' => Url::fromRoute('<front>', [], ['absolute' => TRUE])->toString(),
+    'menu' => [
+      [ "name" => "Caisse", "url" => "/"],
+      [ "name" => "Clients", "url" => "/clients"],
+    ]
   ];
-  $menu = [
-    [ "name" => "Caisse", "url" => "/"],
-    [ "name" => "Clients", "url" => "/clients"],
-  ];
-  
-  $variables['#attached']['drupalSettings']['menu'] = $menu;
+
+  $build['#attached']['drupalSettings']['data'] = $data;
 }
