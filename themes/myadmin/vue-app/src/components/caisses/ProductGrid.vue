@@ -23,6 +23,7 @@
       </div>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 overflow-y-auto flex-1">
+      <!-- <product-card v-for="article in store.articles.rows" :key="article.nid" :article="article" -->
       <product-card v-for="n in 4" :key="n"
         class="bg-white rounded-lg p-2 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow product-card"></product-card>
     </div>
@@ -30,48 +31,24 @@
 </template>
 
 <script>
+import { useArticleStore } from '../../stores/article/article';
 import ProductCard from '../caisses/ProductCard.vue'
+import { onMounted } from 'vue'
+
 
 export default {
   name: 'ProductGrid',
   components: {
     ProductCard,
   },
-  // setup() {
-  //   const posStore = usePOSStore()
+  setup() {
+    const store = useArticleStore();
 
-  //   const categories = [
-  //     { id: 'all', name: 'Tous' },
-  //     { id: 'Médicaments', name: 'Médicaments' },
-  //     { id: 'Vitamines', name: 'Vitamines' },
-  //     { id: 'Matériel', name: 'Matériel' },
-  //     { id: 'Hygiène', name: 'Hygiène' }
-  //   ]
+    onMounted(() => {
+      store.fetchArticles()
+    })
 
-  //   const searchQuery = computed({
-  //     get: () => posStore.searchQuery,
-  //     set: (value) => posStore.setSearchQuery(value)
-  //   })
-
-  //   const activeCategory = computed(() => posStore.activeCategory)
-  //   const filteredProducts = computed(() => posStore.filteredProducts)
-
-  //   const setActiveCategory = (category) => {
-  //     posStore.setCategory(category)
-  //   }
-
-  //   const addToCart = (product) => {
-  //     posStore.addToCart(product)
-  //   }
-
-  //   return {
-  //     categories,
-  //     searchQuery,
-  //     activeCategory,
-  //     filteredProducts,
-  //     setActiveCategory,
-  //     addToCart
-  //   }
-  // }
+    return { store }
+  },
 }
 </script>
