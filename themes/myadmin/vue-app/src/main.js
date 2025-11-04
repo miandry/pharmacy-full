@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import App from './App.vue'
@@ -21,9 +22,11 @@ const router = createRouter({
   routes,
 })
 
+const pinia = createPinia()
+
 document.addEventListener("DOMContentLoaded", () => {
   const el = document.querySelector('#vue-app')
   if (el) {
-    createApp(App).use(router).mount('#vue-app')
+    createApp(App).use(pinia).use(router).mount('#vue-app')
   }
 })
