@@ -23,8 +23,7 @@
       </div>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 overflow-y-auto flex-1">
-      <!-- <product-card v-for="article in store.articles.rows" :key="article.nid" :article="article" -->
-      <product-card v-for="n in 4" :key="n"
+      <product-card v-for="article in store.articles.rows" :key="article.nid" :article="article"
         class="bg-white rounded-lg p-2 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow product-card"></product-card>
     </div>
   </div>

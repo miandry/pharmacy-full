@@ -6,13 +6,13 @@
 </template>
 <script>
 import { ref, onMounted } from 'vue';
-// import rapportClients from '../components/clients/rapportClients.vue'
-// import tableClients from '../components/clients/tableClients.vue'
+import rapportClients from '../components/clients/rapportClients.vue'
+import tableClients from '../components/clients/tableClients.vue'
 export default {
   name: 'Clients',
     components: {
-    // rapportClients,
-    // tableClients
+      rapportClients,
+      tableClients
     },
     computed: {
     transId() {
