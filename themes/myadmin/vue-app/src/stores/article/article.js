@@ -1,22 +1,27 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getArticles } from "../../services/article";
-import axios from "axios";
 
 export const useArticleStore = defineStore("article", () => {
-  const articles = ref([]);
+  const articles = ref({ rows: [], total: 0 });
   const loading = ref(false);
   const error = ref(null);
 
-  async function fetchArticles(params = null) {
+  // fetchArticles: si append=true, on ajoute les nouvelles données
+  async function fetchArticles(params, append = false) {
     loading.value = true;
     try {
-      // const response = await getArticles(params);
+      const response = await getArticles(params);
 
-      let response = await axios.get(
-        "http://www.pharmacy.full/fr/api/v2/node/article"
-      );
-      articles.value = response.data;
+      const data = response.data;
+
+      if (append && articles.value.rows.length) {
+        // Ajouter les nouvelles données à la liste existante
+        articles.value.rows = [...articles.value.rows, ...data.rows];
+      } else {
+        // Remplacer les données
+        articles.value = data;
+      }
       console.log(articles.value);
     } catch (err) {
       error.value = err;
