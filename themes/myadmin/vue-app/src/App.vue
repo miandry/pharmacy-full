@@ -1,5 +1,5 @@
 <template>
-   <Loader />
+   <!-- <Loader /> -->
     <!-- Header Component -->
     <AppHeader @toggle-menu="toggleMobileMenu" />
     

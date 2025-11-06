@@ -25,7 +25,7 @@ export function getLists(entity, content_type, parameters = null) {
   return api.get(path);
 }
 
-export function createItem() {
+export function saveItem(newItem) {
   let path = "/crud/save";
-  return api.get(path);
+  return api.post(path, newItem);
 }

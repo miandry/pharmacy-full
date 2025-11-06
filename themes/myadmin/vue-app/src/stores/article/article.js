@@ -22,7 +22,6 @@ export const useArticleStore = defineStore("article", () => {
         // Remplacer les données
         articles.value = data;
       }
-      console.log(articles.value);
     } catch (err) {
       error.value = err;
     } finally {

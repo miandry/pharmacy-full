@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col lg:flex-row h-[calc(100vh-80px)]">
+    <PageLoader v-if="clientStore.loading || articleStore.loading" />
     <!-- Product Grid Section -->
     <div class="flex-1 p-3 order-2 lg:order-1 flex flex-col">
       <ProductGrid />
@@ -13,10 +14,10 @@
 
     <!-- Modals -->
 
-    <CustomerModal v-if="showCustomerModal" @close="showCustomerModal = false"
+    <ClientModal v-if="showCustomerModal" @close="showCustomerModal = false"
       @open-add-customer-modal="openAddCustomerModal" />
 
-    <AddCustomerModal v-if="showAddCustomerModal" @close-add-customer-modal="closeAddCustomerModal" />
+    <AddClientModal v-if="showAddCustomerModal" @close-add-customer-modal="closeAddCustomerModal" />
 
     <PaymentModal v-if="showPaymentModal" @close-payment-modal="showPaymentModal = false" />
   </div>
@@ -26,18 +27,21 @@
 import { ref, onMounted } from 'vue';
 import ProductGrid from '../components/caisses/ProductGrid.vue'
 import CartSidebar from '../components/caisses/CartSidebar.vue'
-import CustomerModal from '../components/caisses/CustomerModal.vue'
-import AddCustomerModal from '../components/caisses/AddCustomerModal.vue'
+import ClientModal from '../components/caisses/ClientModal.vue'
+import AddClientModal from '../components/caisses/AddClientModal.vue'
 import PaymentModal from '../components/caisses/PaymentModal.vue'
+import PageLoader from '../components/PageLoader.vue';
+import { useArticleStore, useClientStore } from '../stores/index.js';
 
 export default {
   name: 'Caisse',
   components: {
     ProductGrid,
     CartSidebar,
-    CustomerModal,
-    AddCustomerModal,
-    PaymentModal
+    ClientModal,
+    AddClientModal,
+    PaymentModal,
+    PageLoader
   },
   data() {
     return {
@@ -57,15 +61,15 @@ export default {
     }
   },
   setup() {
-    const articles = ref([]);         // Holds the fetched data
-    // Fetch data when the component is mounted
+    const clientStore = useClientStore();
+    const articleStore = useArticleStore();
+
     onMounted(() => {
-      //  articles.value = (window.drupalSettings?.vueArticles || []);
-      //console.log(dataDrupal);
     });
 
     return {
-      articles
+      clientStore,
+      articleStore
     };
   }
 }

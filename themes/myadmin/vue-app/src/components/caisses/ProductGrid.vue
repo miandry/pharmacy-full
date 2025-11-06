@@ -1,6 +1,5 @@
 <template>
   <div>
-    <page-loader v-if="store.loading"></page-loader>
     <!-- Champ de recherche -->
     <div class="mb-3">
       <div class="relative mb-3">
@@ -30,13 +29,12 @@
 
 <script>
 import { ref, onMounted, watch } from 'vue'
-import { useArticleStore } from '../../stores/article/article'
+import { useArticleStore } from '../../stores/index.js'
 import ProductCard from '../caisses/ProductCard.vue'
-import PageLoader from '../PageLoader.vue'
 
 export default {
   name: 'ProductGrid',
-  components: { ProductCard, PageLoader },
+  components: { ProductCard },
   setup() {
     const store = useArticleStore()
     const searchKeyword = ref('')
