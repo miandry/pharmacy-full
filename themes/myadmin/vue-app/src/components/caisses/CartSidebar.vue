@@ -8,19 +8,27 @@
             <div class="mb-3 p-2 bg-gray-50 rounded-lg">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-medium text-gray-700">Client</span>
-                    <button class="text-xs text-primary hover:underline" @click="$emit('open-customer-modal')">Changer</button>
+                    <button class="text-xs text-primary hover:underline" @click="$emit('open-customer-modal')">
+                        {{ store.client && store.client.nid ? 'Changer' : 'Ajouter' }}
+                    </button>
                 </div>
-                <div class="flex items-center space-x-2 mb-2" id="customer-info">
+                <div class="flex items-center space-x-2 mb-2" v-if="store.client && store.client.nid">
                     <div
-                        class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-medium">
-                        RA
+                        class="w-8 h-8 bg-primary text-white uppercase rounded-full flex items-center justify-center text-sm font-medium">
+                        {{ store.client.title.slice(0, 2) }}
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-gray-900">Rakoto Andry</p>
-                        <p class="text-xs text-gray-500">+261 34 12 345 67</p>
+                        <p class="text-sm font-medium text-gray-900 capitalize">{{ store.client.title }}</p>
+                        <p class="text-xs text-gray-500">{{ store.client.field_phone }}</p>
                     </div>
                 </div>
-                <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2 mb-2" v-else>
+                    <div class="text-center text-gray-300 py-2 w-full">
+                        Aucun client
+                    </div>
+                </div>
+            
+                <div class="flex items-center justify-between hidden" v-if="store.client && store.client.nid">
                     <span class="text-xs text-gray-600">Assurance</span>
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" id="insurance-toggle"
@@ -116,7 +124,7 @@
                     <span class="font-medium text-secondary" id="change-due">5,160 Ar</span>
                 </div>
             </div>
-            <button 
+            <button
                 class="w-full py-2 bg-secondary hover:bg-green-600 text-white !rounded-button font-semibold text-sm whitespace-nowrap"
                 @click="$emit('open-payment-modal')">
                 Finaliser la vente
@@ -126,8 +134,16 @@
 </template>
 
 <script>
+import { useClientStore } from '../../stores/index.js';
+
 export default {
     name: 'CardSidebar',
+    setup() {
+        const store = useClientStore();
+        return {
+            store
+        }
+    }
 }
 </script>
 

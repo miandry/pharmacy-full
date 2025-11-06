@@ -17,7 +17,7 @@
     <ClientModal v-if="showCustomerModal" @close="showCustomerModal = false"
       @open-add-customer-modal="openAddCustomerModal" />
 
-    <AddClientModal v-if="showAddCustomerModal" @close-add-customer-modal="closeAddCustomerModal" />
+    <AddClientModal v-if="showAddCustomerModal" @close-add-customer-modal="closeAddCustomerModal" @close-client-modal="showCustomerModal = false" />
 
     <PaymentModal v-if="showPaymentModal" @close-payment-modal="showPaymentModal = false" />
   </div>

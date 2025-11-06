@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getClients, saveClient } from "../../services/cliens";
+import { buildQueryParams } from "../../utils/queryBuilder.js";
 
 export const useClientStore = defineStore("client", () => {
   const clients = ref({ rows: [], total: 0 });
@@ -9,12 +10,13 @@ export const useClientStore = defineStore("client", () => {
   const error = ref(null);
 
   // fetchClient
-  async function fetchClient(params) {
+  async function fetchClients(options) {
     loading.value = true;
     try {
-      const response = await getClients(params);
+      const query = buildQueryParams(options);
+      const response = await getClients(query);
       clients.value = response.data;
-      console.log(clients.value);
+      // console.log(clients.value);
     } catch (err) {
       error.value = err;
     } finally {
@@ -22,17 +24,33 @@ export const useClientStore = defineStore("client", () => {
     }
   }
 
-  async function createClient(newClient) {
+  async function fetchClient(id) {
+    loading.value = true;
+    const query = `filters[nid][val]=${id}`;
     try {
-        const response = await saveClient(newClient);
-        client.value = response;
-        console.log(client.value);
+      const response = await getClients(query);
+      client.value = response.data.rows[0];
+      // console.log("get client:" ,client.value);
+      return response.data.rows[0];
     } catch (err) {
-        error.value = err;
+      error.value = err;
     } finally {
-        loading.value = false;
+      loading.value = false;
     }
   }
 
-  return { clients, client, loading, error, fetchClient, createClient };
+  async function createClient(newClientData) {
+    try {
+      const response = await saveClient(newClientData);
+      const newClient = await fetchClient(response.data.item)
+      // console.log("avy create", newClient);
+      client.value = newClient;
+    } catch (err) {
+      error.value = err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  return { clients, client, loading, error, fetchClients, fetchClient, createClient };
 });

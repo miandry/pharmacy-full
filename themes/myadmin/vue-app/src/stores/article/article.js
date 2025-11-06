@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getArticles } from "../../services/article";
+import { buildQueryParams } from "../../utils/queryBuilder.js";
 
 export const useArticleStore = defineStore("article", () => {
   const articles = ref({ rows: [], total: 0 });
@@ -8,10 +9,11 @@ export const useArticleStore = defineStore("article", () => {
   const error = ref(null);
 
   // fetchArticles: si append=true, on ajoute les nouvelles données
-  async function fetchArticles(params, append = false) {
+  async function fetchArticles(options, append = false) {
     loading.value = true;
     try {
-      const response = await getArticles(params);
+      const query = buildQueryParams(options);
+      const response = await getArticles(query);
 
       const data = response.data;
 

@@ -27,17 +27,12 @@
                                 placeholder="Ex: +261 34 12 345 67">
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
-                            <textarea v-model="form.address" rows="2"
-                                class="w-full px-3 py-2 border border-gray-300 !rounded-button focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm resize-none"
-                                placeholder="Adresse du client (optionnel)"></textarea>
-                        </div>
-
                         <div class="flex items-center space-x-2">
-                            <input type="checkbox" v-model="form.insurance"
-                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
-                            <label class="text-sm text-gray-700">Ce client a une assurance</label>
+                            <label class="text-sm text-gray-700">
+                                <input type="checkbox" :checked="form.field_assurance === 1"
+                                    @change="form.field_assurance = $event.target.checked ? 1 : 0"
+                                    class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                Ce client a une assurance</label>
                         </div>
 
                         <div class="flex space-x-3 mt-6">
@@ -73,6 +68,7 @@ export default {
             bundle: "client",
             title: "",
             field_phone: "",
+            field_assurance: 0,
             status: 1,
         });
 
@@ -85,6 +81,7 @@ export default {
                 form.field_phone = "";
                 // fermer modal si c'est ok
                 emit('close-add-customer-modal');
+                emit('close-client-modal');
             }
             store.loading = false;
         };

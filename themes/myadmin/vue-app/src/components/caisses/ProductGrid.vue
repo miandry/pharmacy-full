@@ -31,6 +31,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useArticleStore } from '../../stores/index.js'
 import ProductCard from '../caisses/ProductCard.vue'
+import { buildQueryParams } from '../../utils/queryBuilder.js';
 
 export default {
   name: 'ProductGrid',
@@ -54,40 +55,10 @@ export default {
       offset: 4
     })
 
-    // Construire la query string custom
-    const buildQueryParams = (options) => {
-      const params = new URLSearchParams()
-
-      // Fields
-      if (options.fields?.length) options.fields.forEach(f => params.append('fields[]', f))
-
-      // Sort
-      if (options.sort?.val && options.sort?.op) {
-        params.append('sort[val]', options.sort.val)
-        params.append('sort[op]', options.sort.op)
-      }
-
-      // Filters
-      if (options.filters && Object.keys(options.filters).length > 0) {
-        for (const [key, filter] of Object.entries(options.filters)) {
-          if (filter?.val) {
-            params.append(`filters[${key}][val]`, filter.val)
-            if (filter.op) params.append(`filters[${key}][op]`, filter.op)
-          }
-        }
-      }
-
-      // Pagination
-      params.append('pager', options.pager)
-      params.append('offset', options.offset)
-
-      return params.toString()
-    }
-
     // Charger les articles (append=true pour "Voir plus")
     const fetchArticles = async (append = false) => {
-      const query = buildQueryParams(queryOptions.value)
-      await store.fetchArticles(query, append)
+      // const query = buildQueryParams(queryOptions.value)
+      await store.fetchArticles(queryOptions.value, append)
     }
 
     // Recherche (entrée clavier)
