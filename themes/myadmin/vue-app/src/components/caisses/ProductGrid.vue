@@ -15,12 +15,14 @@
     <!-- Grille de produits -->
     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 overflow-y-auto flex-1">
       <product-card v-for="article in store.articles.rows" :key="article.nid" :article="article"
+        @add-to-cart="handleAddToCart"
         class="bg-white rounded-lg p-2 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow product-card"></product-card>
     </div>
 
     <!-- Bouton Voir plus -->
     <div v-if="canLoadMore" class="text-center mt-4">
-      <button @click="loadMore" class="px-4 py-1 bg-primary text-white text-sm rounded hover:bg-primary-dark font-semibold">
+      <button @click="loadMore"
+        class="px-4 py-1 bg-primary text-white text-sm rounded hover:bg-primary-dark font-semibold">
         Voir plus
       </button>
     </div>
@@ -31,7 +33,6 @@
 import { ref, onMounted, watch } from 'vue'
 import { useArticleStore } from '../../stores/index.js'
 import ProductCard from '../caisses/ProductCard.vue'
-import { buildQueryParams } from '../../utils/queryBuilder.js';
 
 export default {
   name: 'ProductGrid',
@@ -57,7 +58,6 @@ export default {
 
     // Charger les articles (append=true pour "Voir plus")
     const fetchArticles = async (append = false) => {
-      // const query = buildQueryParams(queryOptions.value)
       await store.fetchArticles(queryOptions.value, append)
     }
 
@@ -73,6 +73,12 @@ export default {
       queryOptions.value.pager += 1
       fetchArticles(true)
     }
+
+    // Add to cart
+    function handleAddToCart(article) {
+      store.addItem(article);
+    }
+
 
     // Déterminer si on peut charger plus
     const canLoadMore = ref(true)
@@ -101,7 +107,8 @@ export default {
       updateFilter,
       onSearch,
       loadMore,
-      canLoadMore
+      canLoadMore,
+      handleAddToCart
     }
   }
 }

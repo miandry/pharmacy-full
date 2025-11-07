@@ -63,7 +63,7 @@
                             class="flex-1 px-4 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 !rounded-button font-medium whitespace-nowrap">
                             Annuler
                         </button>
-                        <button @click="$emit('close-payment-modal')"
+                        <button @click="saveOrder"
                             class="flex-1 px-4 py-3 bg-secondary text-white hover:bg-green-600 !rounded-button font-medium whitespace-nowrap">
                             Confirmer la vente
                         </button>
@@ -75,7 +75,50 @@
 </template>
 
 <script>
+import { toast } from 'vue-sonner';
+import { useArticleStore, useOrderStore } from '../../stores';
+
 export default {
+    name: "PaymentModal",
+    setup(_, { emit }) {
+        const articleStore = useArticleStore();
+        const orderStore = useOrderStore();
+        const saveOrder = async function () {
+            orderStore.loading = true;
+            const orderToCreate = articleStore.savedOrder;
+
+            // Construire l'objet data
+            const data = {
+                entity_type: "node",
+                bundle: "commande",
+                title: "order " + orderToCreate.clientName,
+                field_client: orderToCreate.clientId,
+                clientName: orderToCreate.clientName,
+                // field_articles: orderToCreate.items.map(item => ({
+                //     field_article: item.nid,
+                //     field_quantite: item.quantity,
+                //     prix_d_achat: item.field_prix_unitaire,
+                //     prix_unitaire: item.field_prix_unitaire,
+                // })),
+                field_total_vente: orderToCreate.total,
+                status: 1,
+                field_status: "payed"
+            };
+            await orderStore.createOrder(data);
+            if (orderStore.error) {
+                toast.error("Une erreur est survenue lors de l'ajout du commande.")
+                return
+            }
+            articleStore.clearCart();
+            emit('close-payment-modal');
+            orderStore.loading = false;
+            toast.success('Commande ajouté avec succès !')
+        }
+        return {
+            saveOrder,
+            articleStore
+        }
+    }
 
 }
 </script>

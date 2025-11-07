@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col lg:flex-row h-[calc(100vh-80px)]">
-    <PageLoader v-if="clientStore.loading || articleStore.loading" />
+    <PageLoader v-if="clientStore.loading || articleStore.loading || orderStore.loading" />
     <!-- Product Grid Section -->
     <div class="flex-1 p-3 order-2 lg:order-1 flex flex-col">
       <ProductGrid />
@@ -31,7 +31,7 @@ import ClientModal from '../components/caisses/ClientModal.vue'
 import AddClientModal from '../components/caisses/AddClientModal.vue'
 import PaymentModal from '../components/caisses/PaymentModal.vue'
 import PageLoader from '../components/PageLoader.vue';
-import { useArticleStore, useClientStore } from '../stores/index.js';
+import { useArticleStore, useClientStore, useOrderStore } from '../stores/index.js';
 
 export default {
   name: 'Caisse',
@@ -63,13 +63,12 @@ export default {
   setup() {
     const clientStore = useClientStore();
     const articleStore = useArticleStore();
-
-    onMounted(() => {
-    });
+    const orderStore = useOrderStore();
 
     return {
       clientStore,
-      articleStore
+      articleStore,
+      orderStore
     };
   }
 }

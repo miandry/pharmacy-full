@@ -1,5 +1,5 @@
 <template>
-  <div data-regular-price="12500" data-insurance-price="9400">
+  <div class="article-card" @click="addToCart">
     <div class="aspect-square mb-1 rounded-md overflow-hidden">
       <img
         src="https://readdy.ai/api/search-image?query=Paracetamol%20tablets%20in%20blister%20pack%20with%20white%20pharmaceutical%20packaging%2C%20clean%20medical%20background%2C%20professional%20pharmacy%20product%20photography%2C%20soft%20natural%20lighting%2C%20clinical%20and%20sterile%20aesthetic&width=200&height=200&seq=paracetamol1&orientation=squarish"
@@ -35,14 +35,14 @@ export default {
   setup(props, { emit }) {
 
     // Fonction pour émettre l'événement vers le parent
-    // function addToCart() {
-    //   emit('add-to-cart', props.product)
-    // }
+    function addToCart() {
+      emit('add-to-cart', props.article)
+    }
 
     // Tout ce qu'on retourne ici sera accessible dans le template
-    // return {
-    //   addToCart
-    // }
+    return {
+      addToCart
+    }
   }
 }
 </script>
@@ -53,5 +53,9 @@ export default {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.article-card:active {
+    transform: scale(0.98);
 }
 </style>

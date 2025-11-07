@@ -3,7 +3,8 @@
         <div class="p-3 border-b border-gray-200">
             <div class="flex items-center justify-between mb-3">
                 <h2 class="text-base font-semibold text-gray-900">Commande actuelle</h2>
-                <button class="text-xs text-gray-500 hover:text-primary">Tout effacer</button>
+                <button class="text-xs text-gray-500 hover:text-primary" @click="articleStore.clearCart">Tout
+                    effacer</button>
             </div>
             <div class="mb-3 p-2 bg-gray-50 rounded-lg">
                 <div class="flex items-center justify-between mb-2">
@@ -23,11 +24,11 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-2 mb-2" v-else>
-                    <div class="text-center text-gray-300 py-2 w-full">
-                        Aucun client
+                    <div class="text-center text-gray-300 w-full">
+                        Aucun client sélectionné
                     </div>
                 </div>
-            
+
                 <div class="flex items-center justify-between hidden" v-if="store.client && store.client.nid">
                     <span class="text-xs text-gray-600">Assurance</span>
                     <label class="flex items-center space-x-2">
@@ -37,48 +38,36 @@
                     </label>
                 </div>
             </div>
-            <div class="space-y-2 mb-3 max-h-32 overflow-y-auto" id="cart-items">
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
+            <div class="space-y-2 mb-3 max-h-32 overflow-y-auto" id="cart-items" v-if="articleStore.cardItems.length">
+                <div class="flex items-center justify-between py-2 border-b border-gray-100"
+                    v-for="item in articleStore.cardItems" :key="item.nid">
                     <div class="flex-1 min-w-0 pr-2">
-                        <h3 class="font-medium text-gray-900 text-xs truncate">Paracetamol 500mg</h3>
-                        <p class="text-xs text-gray-500">12,500 Ar each</p>
+                        <h3 class="font-medium text-gray-900 text-xs truncate">{{ item.title }}</h3>
+                        <p class="text-xs text-gray-500">{{ item.field_prix_unitaire }} Ar chacun</p>
                     </div>
                     <div class="flex items-center space-x-1">
-                        <button
+                        <button @click="decrementQuantity(item)"
                             class="w-6 h-6 flex items-center justify-center bg-gray-100 hover:bg-gray-200 !rounded-button">
                             <i class="ri-subtract-line text-xs"></i>
                         </button>
-                        <span class="w-4 text-center font-medium text-xs">2</span>
-                        <button
+                        <span class="w-4 text-center font-medium text-xs">{{ item.quantity }}</span>
+                        <button @click="incrementQuantity(item)"
                             class="w-6 h-6 flex items-center justify-center bg-gray-100 hover:bg-gray-200 !rounded-button">
                             <i class="ri-add-line text-xs"></i>
                         </button>
                     </div>
-                    <div class="w-14 text-right font-semibold text-primary text-xs">25,000 Ar</div>
-                </div>
-                <div class="flex items-center justify-between py-2 border-b border-gray-100">
-                    <div class="flex-1">
-                        <h3 class="font-medium text-gray-900 text-xs">Vitamin C 1000mg</h3>
-                        <p class="text-xs text-gray-500">8,200 Ar each</p>
-                    </div>
-                    <div class="flex items-center space-x-1">
-                        <button
-                            class="w-6 h-6 flex items-center justify-center bg-gray-100 hover:bg-gray-200 !rounded-button">
-                            <i class="ri-subtract-line text-xs"></i>
-                        </button>
-                        <span class="w-4 text-center font-medium text-xs">1</span>
-                        <button
-                            class="w-6 h-6 flex items-center justify-center bg-gray-100 hover:bg-gray-200 !rounded-button">
-                            <i class="ri-add-line text-xs"></i>
-                        </button>
-                    </div>
-                    <div class="w-14 text-right font-semibold text-primary text-xs">8,200 Ar</div>
+                    <div class="w-14 text-right font-semibold text-primary text-xs">{{ item.field_prix_unitaire *
+                        item.quantity }} Ar</div>
                 </div>
             </div>
+            <div class="space-y-2 mb-3 max-h-32 overflow-y-auto text-center" v-else>
+                <p class="py-3 text-gray-400">Aucun article sélectionné</p>
+            </div>
+
             <div class="space-y-1 mb-3">
                 <div class="flex justify-between text-xs">
                     <span class="text-gray-600">Sous-total</span>
-                    <span class="font-medium">33,200 Ar</span>
+                    <span class="font-medium">{{ articleStore.total.toLocaleString() }} Ar</span>
                 </div>
                 <div class="flex justify-between text-xs">
                     <span class="text-gray-600">TVA (20%)</span>
@@ -91,7 +80,7 @@
                 <div class="border-t border-gray-200 pt-1">
                     <div class="flex justify-between text-sm font-semibold">
                         <span>Total</span>
-                        <span class="text-primary">39,840 Ar</span>
+                        <span class="text-primary">{{ articleStore.total.toLocaleString() }} Ar</span>
                     </div>
                 </div>
             </div>
@@ -103,7 +92,7 @@
                     </div>
                     <span>Appliquer remise</span>
                 </button>
-                <button
+                <button @click="saveCurrentOrder"
                     class="w-full py-2 bg-orange-100 hover:bg-orange-200 text-orange-700 !rounded-button font-medium whitespace-nowrap flex items-center justify-center space-x-2 text-xs"
                     id="save-unpaid">
                     <div class="w-4 h-4 flex items-center justify-center">
@@ -126,7 +115,7 @@
             </div>
             <button
                 class="w-full py-2 bg-secondary hover:bg-green-600 text-white !rounded-button font-semibold text-sm whitespace-nowrap"
-                @click="$emit('open-payment-modal')">
+                @click="handleFinalizeSale">
                 Finaliser la vente
             </button>
         </div>
@@ -134,14 +123,59 @@
 </template>
 
 <script>
-import { useClientStore } from '../../stores/index.js';
+import { toast } from 'vue-sonner';
+import { useArticleStore, useClientStore } from '../../stores/index.js';
 
 export default {
     name: 'CardSidebar',
-    setup() {
+    setup(_, { emit }) {
         const store = useClientStore();
+        const articleStore = useArticleStore();
+
+        function incrementQuantity(item) {
+            item.quantity++
+        }
+
+        function decrementQuantity(item) {
+            item.quantity--
+            if (item.quantity <= 0) {
+                removeItem(item)
+            }
+        }
+
+        function removeItem(item) {
+            articleStore.removeItem(item)
+        }
+
+        // Validation client et articles avant de sauvegarder
+        function saveCurrentOrder() {
+            if (!store.client || !store.client.nid) {
+                toast.error("Veuillez sélectionner un client avant de sauvegarder la commande.")
+                return null;
+            }
+            if (!articleStore.cardItems.length) {
+                toast.error("Ajoutez au moins un article.")
+                return null;
+            }
+            return articleStore.saveOrder(store.client);
+        }
+
+        function handleFinalizeSale() {
+            const order = saveCurrentOrder();
+            if (order) {
+                emit('open-payment-modal');
+            }
+        }
+
+
         return {
-            store
+            store,
+            articleStore,
+            incrementQuantity,
+            decrementQuantity,
+            removeItem,
+            saveCurrentOrder,
+            handleFinalizeSale
         }
     }
 }
