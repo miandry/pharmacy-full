@@ -22,7 +22,7 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
-                            <input type="tel" v-model="form.field_phone"
+                            <input type="tel" v-model="form.field_phone" required
                                 class="w-full px-3 py-2 border border-gray-300 !rounded-button focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
                                 placeholder="Ex: +261 34 12 345 67">
                         </div>
@@ -58,6 +58,7 @@
 <script>
 import { reactive } from "vue";
 import { useClientStore } from "../../stores/index.js";
+import { toast } from "vue-sonner";
 
 export default {
     setup(props, { emit }) {
@@ -75,14 +76,19 @@ export default {
         const submitClientForm = async () => {
             store.loading = true;
             await store.createClient(form);
-            if (!store.error) {
-                // reset form
-                form.title = "";
-                form.field_phone = "";
-                // fermer modal si c'est ok
-                emit('close-add-customer-modal');
-                emit('close-client-modal');
+
+            if (store.error) {
+                toast.error("Une erreur est survenue lors de l'ajout client.")
+                return
             }
+
+            // reset form
+            form.title = "";
+            form.field_phone = "";
+            // fermer modal si c'est ok
+            emit('close-add-customer-modal');
+            emit('close-client-modal');
+            toast.success('Client sélectionné avec succès !')
             store.loading = false;
         };
 

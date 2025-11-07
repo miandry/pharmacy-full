@@ -1,5 +1,7 @@
 <template>
    <!-- <Loader /> -->
+    <!-- Toast notification -->
+    <Toaster position="top-right" richColors />
     <!-- Header Component -->
     <AppHeader @toggle-menu="toggleMobileMenu" />
     
@@ -18,14 +20,15 @@
 <script>
 import AppHeader from './components/AppHeader.vue'
 import MobileMenu from './components/MobileMenu.vue'
-import Loader from './components/Loader.vue'
+import { Toaster } from 'vue-sonner'
+import 'vue-sonner/style.css'
 
 export default {
   name: 'App',
   components: {
     AppHeader,
     MobileMenu,
-    Loader
+    Toaster
   },
   
   data() {

@@ -11,7 +11,8 @@
     "axios": "^1.12.2",
     "pinia": "^3.0.3",
     "vue": "^3.4.0",
-    "vue-router": "^4.2.0"
+    "vue-router": "^4.2.0",
+    "vue-sonner": "^2.0.9"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",

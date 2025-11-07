@@ -51,6 +51,8 @@
 <script>
 import { onMounted, ref } from 'vue';
 import { useClientStore } from '../../stores/index.js';
+import { toast } from 'vue-sonner';
+
 
 export default {
     name: "CustomerModal",
@@ -83,7 +85,14 @@ export default {
 
         const confirmSelectedClient = async () => {
             await store.fetchClient(selectedClientNid.value);
-            emit('close');
+
+            if (store.error) {
+                toast.error("Une erreur est survenue lors de la sélection du client.")
+                return
+            }
+
+            toast.success('Client sélectionné avec succès !')
+            emit('close')
         }
 
         onMounted(() => fetchClients());
