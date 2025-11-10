@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { buildQueryParams } from "../../utils/queryBuilder.js";
-import { getOrders, saveOrder } from "../../services/order.js";
+import { getOrders, saveOrder, saveParagraph } from "../../services/order.js";
 
 export const useOrderStore = defineStore("order", () => {
   const orders = ref({ rows: [], total: 0 });
