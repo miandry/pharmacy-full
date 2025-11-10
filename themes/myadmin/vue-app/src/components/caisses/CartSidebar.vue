@@ -69,13 +69,9 @@
                     <span class="text-gray-600">Sous-total</span>
                     <span class="font-medium">{{ articleStore.total.toLocaleString() }} Ar</span>
                 </div>
-                <div class="flex justify-between text-xs">
+                <div class="flex justify-between text-xs hidden">
                     <span class="text-gray-600">TVA (20%)</span>
                     <span class="font-medium">6,640 Ar</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-gray-600">Remise</span>
-                    <span class="font-medium text-secondary">-0 Ar</span>
                 </div>
                 <div class="border-t border-gray-200 pt-1">
                     <div class="flex justify-between text-sm font-semibold">
@@ -85,14 +81,7 @@
                 </div>
             </div>
             <div class="space-y-2 mb-3">
-                <button
-                    class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 !rounded-button font-medium whitespace-nowrap flex items-center justify-center space-x-2 text-xs">
-                    <div class="w-4 h-4 flex items-center justify-center">
-                        <i class="ri-percent-line"></i>
-                    </div>
-                    <span>Appliquer remise</span>
-                </button>
-                <button @click="saveCurrentOrder"
+                <button @click="creatOrder"
                     class="w-full py-2 bg-orange-100 hover:bg-orange-200 text-orange-700 !rounded-button font-medium whitespace-nowrap flex items-center justify-center space-x-2 text-xs"
                     id="save-unpaid">
                     <div class="w-4 h-4 flex items-center justify-center">
@@ -124,7 +113,7 @@
 
 <script>
 import { toast } from 'vue-sonner';
-import { useArticleStore, useClientStore } from '../../stores/index.js';
+import { useArticleStore, useClientStore, useOrderStore } from '../../stores/index.js';
 
 export default {
     name: 'CardSidebar',
@@ -167,6 +156,49 @@ export default {
             }
         }
 
+        const orderStore = useOrderStore();
+        const creatOrder = async function () {
+            const order = saveCurrentOrder();
+            if (order) {
+                try {
+                    orderStore.loading = true;
+                    const orderToCreate = articleStore.savedOrder;
+                    const allArticles = orderToCreate.items.map(item => ({
+                        entity_type: "paragraph",
+                        bundle: "commande",
+                        field_article: item.nid,
+                        field_quantite: item.quantity,
+                        field_prix_d_achat: item.field_prix_unitaire,
+                        field_prix_unitaire: item.field_prix_unitaire,
+                    }));
+    
+                    const data = {
+                        entity_type: "node",
+                        bundle: "commande",
+                        title: "order " + orderToCreate.clientName,
+                        field_client: orderToCreate.clientId,
+                        clientName: orderToCreate.clientName,
+                        field_articles: allArticles,
+                        field_total_vente: orderToCreate.total,
+                        status: 1,
+                        field_status: "unpayed"
+                    };
+                    await orderStore.createOrder(data);
+                    if (orderStore.error) {
+                        toast.error("Une erreur est survenue lors de l'ajout du commande.")
+                        return
+                    }
+                    articleStore.clearCart();
+                    orderStore.loading = false;
+                    toast.success('Commande ajouté avec succès !')
+                } catch (err) {
+                    toast.error("Une erreur inattendue est survenue.");
+                } finally {
+                    orderStore.loading = false;
+                }
+            }
+        }
+
 
         return {
             store,
@@ -175,7 +207,8 @@ export default {
             decrementQuantity,
             removeItem,
             saveCurrentOrder,
-            handleFinalizeSale
+            handleFinalizeSale,
+            creatOrder
         }
     }
 }
