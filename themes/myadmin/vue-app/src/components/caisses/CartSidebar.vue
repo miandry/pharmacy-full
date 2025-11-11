@@ -38,7 +38,7 @@
                     </label>
                 </div>
             </div>
-            <div class="space-y-2 mb-3 max-h-32 overflow-y-auto" id="cart-items" v-if="articleStore.cardItems.length">
+            <div class="space-y-2 mb-3 max-h-52 overflow-y-auto" id="cart-items" v-if="articleStore.cardItems.length">
                 <div class="flex items-center justify-between py-2 border-b border-gray-100"
                     v-for="item in articleStore.cardItems" :key="item.nid">
                     <div class="flex-1 min-w-0 pr-2">
@@ -92,7 +92,7 @@
             </div>
         </div>
         <div class="flex-1 p-3">
-            <div class="mb-2">
+            <div class="mb-2 hidden">
                 <div class="flex justify-between text-xs mb-1">
                     <span class="text-gray-600">Montant reçu</span>
                     <span class="font-medium" id="amount-received">45,000 Ar</span>

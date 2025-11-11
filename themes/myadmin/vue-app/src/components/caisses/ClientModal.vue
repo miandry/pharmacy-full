@@ -14,14 +14,33 @@
                     </div>
                     <div class="mb-4">
                         <div class="">
-                            <div v-if="store.clients.rows.length">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Client</label>
-                                <select id="customer-select" v-model="selectedClientNid"
-                                    class="w-full px-3 py-2 border border-gray-300 !rounded-button focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
-                                    <option v-for="client in store.clients.rows" :key="client.nid" :value="client.nid">
-                                        {{ client.title }} - {{ client.field_phone }}
-                                    </option>
-                                </select>
+                            <div>
+                                <div class="relative mb-3">
+                                    <div
+                                        class="w-4 h-4 flex items-center justify-center absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                        <i class="ri-search-line text-sm"></i>
+                                    </div>
+                                    <input type="text" v-model="clientNameSearch" @keyup.enter="onSearch"
+                                        placeholder="Rechercher un client..."
+                                        class="w-full pl-10 pr-4 py-2 border border-gray-300 !rounded-button focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                                </div>
+                                <div class="max-h-48 overflow-y-auto border border-gray-300 !rounded-button">
+                                    <div id="customer-list" class="divide-y divide-gray-100">
+                                        <div v-for="(client, index) in store.clients.rows" :key="index" :class="[
+                                            'flex items-center space-x-3 px-3 py-2 hover:bg-gray-50 cursor-pointer customer-item border-t-0',
+                                            selectedIndex === index ? 'bg-blue-50 border-primary border-l-4' : ''
+                                        ]" @click="selectClient(client.nid, index)">
+                                            <div
+                                                class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-medium uppercase ">
+                                                {{ client.title.slice(0, 2) }}
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-gray-900">{{ client.title }}</p>
+                                                <p class="text-xs text-gray-500">{{ client.field_phone }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <button @click="$emit('open-add-customer-modal')"
                                 class="w-full px-3 py-2 mt-3 border-2 border-dashed border-gray-300 hover:border-primary text-gray-600 hover:text-primary !rounded-button font-medium text-sm whitespace-nowrap flex items-center justify-center space-x-2">
@@ -59,6 +78,8 @@ export default {
     setup(_, { emit }) {
         const store = useClientStore();
         const selectedClientNid = ref(null);
+        const selectedIndex = ref(null);
+        const clientNameSearch = ref(null);
         // Paramètres dynamiques de la requête
         const queryOptions = ref({
             fields: [
@@ -77,10 +98,6 @@ export default {
 
         const fetchClients = async () => {
             await store.fetchClients(queryOptions.value);
-            // Sélectionner le premier client par défaut si la liste n'est pas vide
-            if (store.clients.rows.length > 0) {
-                selectedClientNid.value = store.clients.rows[0].nid;
-            }
         }
 
         const confirmSelectedClient = async () => {
@@ -95,17 +112,44 @@ export default {
             emit('close')
         }
 
+        const onSearch = async () => {
+            updateFilter('title', clientNameSearch.value, 'CONTAINS')
+            fetchClients()
+        }
+
+        const updateFilter = (key, value, op = '=') => {
+            if (!value) delete queryOptions.value.filters[key]
+            else queryOptions.value.filters[key] = { val: value, op }
+        }
+
+        const selectClient = (client, index) => {
+            selectedIndex.value = index
+            selectedClientNid.value = client
+        }
+
         onMounted(() => fetchClients());
 
         return {
             store,
             queryOptions,
             confirmSelectedClient,
-            selectedClientNid
+            selectedClientNid,
+            selectedIndex,
+            clientNameSearch,
+            onSearch,
+            selectClient
         }
     }
 
 }
 </script>
 
-<style></style>
+<style>
+.border-primary {
+    border-color: rgb(59, 130, 246, 1) !important;
+}
+
+.border-t-0 {
+    border-top-width: 0px !important;
+}
+</style>

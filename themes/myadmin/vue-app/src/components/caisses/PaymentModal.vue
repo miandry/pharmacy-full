@@ -15,46 +15,28 @@
                     <div class="mb-4 p-4 bg-gray-50 rounded-lg">
                         <div class="flex justify-between text-sm mb-2">
                             <span class="text-gray-600">Total à payer</span>
-                            <span class="font-semibold text-primary" id="modal-total">39,840 Ar</span>
+                            <span class="font-semibold text-primary">{{ orderToCreate.total.toLocaleString() }} Ar</span>
                         </div>
                         <div class="flex justify-between text-sm mb-2">
                             <span class="text-gray-600">Montant reçu</span>
-                            <span class="font-medium" id="modal-amount-received">45,000 Ar</span>
+                            <span class="font-medium" id="modal-amount-received">{{ formattedAmountReceived }} Ar</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600">Monnaie à rendre</span>
-                            <span class="font-medium text-secondary" id="modal-change-due">5,160 Ar</span>
+                            <span class="font-medium text-secondary" id="modal-change-due">{{ changeDue >= 0 ?
+                                changeDue.toLocaleString() + ' Ar' : '0 Ar' }}</span>
                         </div>
                     </div>
                     <div class="mb-4">
                         <div class="grid grid-cols-3 gap-2" id="modal-numpad">
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">1</button>
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">2</button>
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">3</button>
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">4</button>
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">5</button>
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">6</button>
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">7</button>
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">8</button>
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">9</button>
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">.</button>
-                            <button
-                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg whitespace-nowrap">0</button>
-                            <button
-                                class="h-12 bg-red-100 hover:bg-red-200 text-red-600 !rounded-button font-semibold text-lg whitespace-nowrap flex items-center justify-center">
-                                <div class="w-5 h-5 flex items-center justify-center">
-                                    <i class="ri-delete-back-2-line"></i>
-                                </div>
+                            <button v-for="n in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0']" :key="n"
+                                @click="handleNumpadClick(n)"
+                                class="h-12 bg-gray-100 hover:bg-gray-200 !rounded-button font-semibold text-lg">
+                                {{ n }}
+                            </button>
+                            <button @click="handleNumpadClick('delete')"
+                                class="h-12 bg-red-100 hover:bg-red-200 text-red-600 !rounded-button font-semibold text-lg flex items-center justify-center">
+                                <i class="ri-delete-back-2-line"></i>
                             </button>
                         </div>
                     </div>
@@ -77,17 +59,39 @@
 <script>
 import { toast } from 'vue-sonner';
 import { useArticleStore, useOrderStore } from '../../stores';
+import { ref, computed } from 'vue';
 
 export default {
     name: "PaymentModal",
     setup(_, { emit }) {
         const articleStore = useArticleStore();
         const orderStore = useOrderStore();
-        const saveOrder = async function () {
+        const orderToCreate = articleStore.savedOrder;
+        const amountReceived = ref('');
 
+        const changeDue = computed(() => {
+            const total = orderToCreate.total || 0;
+            const received = parseFloat(amountReceived.value.replace(/,/g, '')) || 0;
+            return received - total;
+        });
+
+        const handleNumpadClick = (value) => {
+            if (value === 'delete') {
+                amountReceived.value = amountReceived.value.slice(0, -1);
+            } else {
+                amountReceived.value += value;
+            }
+        }
+
+        const formattedAmountReceived = computed(() => {
+            if (!amountReceived.value) return '0';
+            const numeric = parseFloat(amountReceived.value.replace(/\s/g, '')) || 0;
+            return numeric.toLocaleString('fr-FR');
+        });
+
+        const saveOrder = async function () {
             try {
                 orderStore.loading = true;
-                const orderToCreate = articleStore.savedOrder;
                 const allArticles = orderToCreate.items.map(item => ({
                     entity_type: "paragraph",
                     bundle: "commande",
@@ -126,7 +130,12 @@ export default {
         }
         return {
             saveOrder,
-            articleStore
+            articleStore,
+            orderToCreate,
+            amountReceived,
+            changeDue,
+            handleNumpadClick,
+            formattedAmountReceived
         }
     }
 

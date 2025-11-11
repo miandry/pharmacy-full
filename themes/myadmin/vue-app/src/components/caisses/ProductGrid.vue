@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col h-full">
     <!-- Champ de recherche -->
     <div class="mb-3">
       <div class="relative mb-3">
@@ -53,7 +53,7 @@ export default {
       sort: { val: 'nid', op: 'desc' },
       filters: {},
       pager: 0,
-      offset: 4
+      offset: 8
     })
 
     // Charger les articles (append=true pour "Voir plus")

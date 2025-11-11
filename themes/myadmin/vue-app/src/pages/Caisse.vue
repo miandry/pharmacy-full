@@ -1,14 +1,14 @@
 <template>
-  <div class="flex flex-col lg:flex-row h-[calc(100vh-80px)]">
+  <div class="flex flex-col sm:flex-row h-[calc(100vh-80px)]">
     <PageLoader v-if="clientStore.loading || articleStore.loading || orderStore.loading" />
     <!-- Product Grid Section -->
-    <div class="flex-1 p-3 order-2 lg:order-1 flex flex-col">
+    <div class="flex-1 p-3 order-2 sm:order-1 flex flex-col">
       <ProductGrid />
     </div>
 
     <!-- Cart Sidebar -->
     <div
-      class="w-full lg:w-80 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 flex flex-col order-1 lg:order-2 h-full">
+      class="w-full sm:w-60 lg:w-80 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 flex flex-col order-1 sm:order-2 h-full">
       <CartSidebar @open-customer-modal="showCustomerModal = true" @open-payment-modal="showPaymentModal = true" />
     </div>
 
