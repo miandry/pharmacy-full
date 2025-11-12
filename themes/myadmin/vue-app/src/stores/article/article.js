@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, h, ref } from "vue";
 import { getArticles } from "../../services/article";
 import { buildQueryParams } from "../../utils/queryBuilder.js";
+import { toast } from "vue-sonner";
 
 export const useArticleStore = defineStore("article", () => {
   const articles = ref({ rows: [], total: 0 });
@@ -34,27 +35,64 @@ export const useArticleStore = defineStore("article", () => {
   }
 
   function addItem(article) {
-    // Vérifie si l'article est déjà dans le panier
     const item = cardItems.value.find((i) => i.nid == article.nid);
 
     if (item) {
-      // Si déjà présent, incrémente seulement la quantité
-      item.quantity++;
+      // vérifier le stock avant d'augmenter
+      if (article.field_quantite_stock > 0) {
+        item.quantity++;
+        article.field_quantite_stock--; // décrémente le stock dans articles.rows
+      } else {
+        toast.warning(() =>
+          h("div", ["Rupture de stock !", h("br"), h("span", article.title)])
+        );
+      }
     } else {
-      // Sinon, ajoute l'article et crée la clé quantity = 1
-      cardItems.value.push({
-        ...article,
-        quantity: 1,
-      });
+      if (article.field_quantite_stock > 0) {
+        cardItems.value.push({ ...article, quantity: 1 });
+        article.field_quantite_stock--;
+      } else {
+        toast.warning(() =>
+          h("div", ["Rupture de stock !", h("br"), h("span", article.title)])
+        );
+      }
     }
   }
 
-  function removeItem(index) {
-    cardItems.value.splice(index, 1);
+  function incrementQuantity(item) {
+    const article = articles.value.rows.find((a) => a.nid == item.nid);
+    if (article && article.field_quantite_stock > 0) {
+      item.quantity++;
+      article.field_quantite_stock--;
+    } else {
+      toast.warning(() =>
+        h("div", ["Rupture de stock !", h("br"), h("span", article.title)])
+      );
+    }
+  }
+
+  function decrementQuantity(item) {
+    const article = articles.value.rows.find((a) => a.nid == item.nid);
+    if (item.quantity > 1) {
+      item.quantity--;
+      if (article) article.field_quantite_stock++;
+    } else {
+      removeItem(item);
+    }
+  }
+
+  function removeItem(item) {
+    const index = cardItems.value.findIndex((i) => i.nid == item.nid);
+    if (index !== -1) {
+      const article = articles.value.rows.find((a) => a.nid == item.nid);
+      if (article)
+        article.field_quantite_stock += cardItems.value[index].quantity;
+      cardItems.value.splice(index, 1);
+    }
   }
 
   function clearCart() {
-    cardItems.value = [];
+    cardItems.value.splice(0);
   }
 
   // Calcul du total
@@ -85,6 +123,8 @@ export const useArticleStore = defineStore("article", () => {
     clearCart,
     total,
     savedOrder,
-    saveOrder
+    saveOrder,
+    decrementQuantity,
+    incrementQuantity,
   };
 });

@@ -8,7 +8,7 @@
 
     <!-- Cart Sidebar -->
     <div
-      class="w-full sm:w-60 lg:w-80 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 flex flex-col order-1 sm:order-2 h-full">
+      class="w-full sm:w-60 lg:w-80 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 flex flex-col order-1 sm:order-2 h-auto">
       <CartSidebar @open-customer-modal="showCustomerModal = true" @open-payment-modal="showPaymentModal = true" />
     </div>
 
@@ -17,7 +17,8 @@
     <ClientModal v-if="showCustomerModal" @close="showCustomerModal = false"
       @open-add-customer-modal="openAddCustomerModal" />
 
-    <AddClientModal v-if="showAddCustomerModal" @close-add-customer-modal="closeAddCustomerModal" @close-client-modal="showCustomerModal = false" />
+    <AddClientModal v-if="showAddCustomerModal" @close-add-customer-modal="closeAddCustomerModal"
+      @close-client-modal="showCustomerModal = false" />
 
     <PaymentModal v-if="showPaymentModal" @close-payment-modal="showPaymentModal = false" />
   </div>
@@ -73,3 +74,11 @@ export default {
   }
 }
 </script>
+
+<style>
+@media (min-width: 1024px) {
+  .lg\:w-80 {
+    width: 27rem !important;
+  }
+}
+</style>

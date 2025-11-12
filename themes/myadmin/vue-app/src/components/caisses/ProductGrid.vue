@@ -13,7 +13,7 @@
     </div>
 
     <!-- Grille de produits -->
-    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 overflow-y-auto flex-1">
+    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 overflow-y-auto">
       <product-card v-for="article in store.articles.rows" :key="article.nid" :article="article"
         @add-to-cart="handleAddToCart"
         class="bg-white rounded-lg p-2 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow product-card"></product-card>
@@ -33,6 +33,8 @@
 import { ref, onMounted, watch } from 'vue'
 import { useArticleStore } from '../../stores/index.js'
 import ProductCard from '../caisses/ProductCard.vue'
+import { toast } from 'vue-sonner';
+import { h } from 'vue';
 
 export default {
   name: 'ProductGrid',
@@ -76,7 +78,25 @@ export default {
 
     // Add to cart
     function handleAddToCart(article) {
-      store.addItem(article);
+      if (article.field_quantite_stock > 0) {
+        // article.field_quantite_stock--
+        store.addItem(article);
+        toast.success(() =>
+          h('div', [
+            'Ajouté au panier !',
+            h('br'),
+            h('span', article.title)
+          ])
+        );
+      } else {
+        toast.warning(() =>
+          h('div', [
+            'Rupture de stock !',
+            h('br'),
+            h('span', article.title)
+          ])
+        );
+      }
     }
 
 

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-white border-t lg:border-t-0 lg:border-l border-gray-200 h-auto">
         <div class="p-3 border-b border-gray-200">
             <div class="flex items-center justify-between mb-3">
                 <h2 class="text-base font-semibold text-gray-900">Commande actuelle</h2>
@@ -38,8 +38,8 @@
                     </label>
                 </div>
             </div>
-            <div class="space-y-2 mb-3 max-h-52 overflow-y-auto" id="cart-items" v-if="articleStore.cardItems.length">
-                <div class="flex items-center justify-between py-2 border-b border-gray-100"
+            <div class="space-y-2 mb-3 max-h-68 overflow-y-auto" id="cart-items" v-if="articleStore.cardItems.length">
+                <div class="flex items-center justify-between py-2 border-b border-gray-100 gap-2"
                     v-for="item in articleStore.cardItems" :key="item.nid">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-medium text-gray-900 text-xs truncate">{{ item.title }}</h3>
@@ -56,8 +56,8 @@
                             <i class="ri-add-line text-xs"></i>
                         </button>
                     </div>
-                    <div class="w-14 text-right font-semibold text-primary text-xs">{{ item.field_prix_unitaire *
-                        item.quantity }} Ar</div>
+                    <div class="w-22 text-right font-semibold text-primary text-xs">{{ (item.field_prix_unitaire *
+                        item.quantity).toLocaleString() }} Ar</div>
                 </div>
             </div>
             <div class="space-y-2 mb-3 max-h-32 overflow-y-auto text-center" v-else>
@@ -122,18 +122,15 @@ export default {
         const articleStore = useArticleStore();
 
         function incrementQuantity(item) {
-            item.quantity++
+            articleStore.incrementQuantity(item);
         }
 
         function decrementQuantity(item) {
-            item.quantity--
-            if (item.quantity <= 0) {
-                removeItem(item)
-            }
+            articleStore.decrementQuantity(item);
         }
 
         function removeItem(item) {
-            articleStore.removeItem(item)
+            articleStore.removeItem(item);
         }
 
         // Validation client et articles avant de sauvegarder
@@ -171,7 +168,7 @@ export default {
                         field_prix_d_achat: item.field_prix_unitaire,
                         field_prix_unitaire: item.field_prix_unitaire,
                     }));
-    
+
                     const data = {
                         entity_type: "node",
                         bundle: "commande",
@@ -214,4 +211,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.max-h-68 {
+    max-height: 22rem;
+}
+</style>

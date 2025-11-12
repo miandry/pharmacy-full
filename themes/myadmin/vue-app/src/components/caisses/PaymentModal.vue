@@ -15,7 +15,8 @@
                     <div class="mb-4 p-4 bg-gray-50 rounded-lg">
                         <div class="flex justify-between text-sm mb-2">
                             <span class="text-gray-600">Total à payer</span>
-                            <span class="font-semibold text-primary">{{ orderToCreate.total.toLocaleString() }} Ar</span>
+                            <span class="font-semibold text-primary">{{ orderToCreate.total.toLocaleString() }}
+                                Ar</span>
                         </div>
                         <div class="flex justify-between text-sm mb-2">
                             <span class="text-gray-600">Montant reçu</span>
@@ -59,7 +60,7 @@
 <script>
 import { toast } from 'vue-sonner';
 import { useArticleStore, useOrderStore } from '../../stores';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
     name: "PaymentModal",
@@ -91,6 +92,10 @@ export default {
 
         const saveOrder = async function () {
             try {
+                if (amountReceived.value < orderToCreate.total) {
+                    toast.warning('Le montant reçu est insuffisant.')
+                    return;
+                }
                 orderStore.loading = true;
                 const allArticles = orderToCreate.items.map(item => ({
                     entity_type: "paragraph",
@@ -128,6 +133,32 @@ export default {
                 orderStore.loading = false;
             }
         }
+
+        // === Gestion du clavier ===
+        const handleKeydown = (e) => {
+            if (/^[0-9.]$/.test(e.key)) {
+                // pavé numérique ou chiffres classiques
+                amountReceived.value += e.key;
+            } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                // suppression
+                amountReceived.value = amountReceived.value.slice(0, -1);
+            } else if (e.key === 'Enter') {
+                // confirmer
+                saveOrder();
+            } else if (e.key === 'Escape') {
+                // annuler / fermer
+                emit('close-payment-modal');
+            }
+        };
+
+        onMounted(() => {
+            window.addEventListener('keydown', handleKeydown);
+        });
+
+        onBeforeUnmount(() => {
+            window.removeEventListener('keydown', handleKeydown);
+        });
+
         return {
             saveOrder,
             articleStore,
