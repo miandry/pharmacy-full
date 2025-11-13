@@ -73,4 +73,9 @@ export default {
 .article-card:active {
   transform: scale(0.98);
 }
+
+.article-card {
+  /* max-width: 145px; */
+  /* min-width: 140px; */
+}
 </style>

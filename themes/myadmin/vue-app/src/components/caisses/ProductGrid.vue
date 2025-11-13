@@ -13,7 +13,7 @@
     </div>
 
     <!-- Grille de produits -->
-    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 overflow-y-auto">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-2 overflow-y-auto">
       <product-card v-for="article in store.articles.rows" :key="article.nid" :article="article"
         @add-to-cart="handleAddToCart"
         class="bg-white rounded-lg p-2 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow product-card"></product-card>
@@ -55,7 +55,7 @@ export default {
       sort: { val: 'nid', op: 'desc' },
       filters: {},
       pager: 0,
-      offset: 8
+      offset: 12
     })
 
     // Charger les articles (append=true pour "Voir plus")

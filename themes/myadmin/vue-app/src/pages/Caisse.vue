@@ -6,9 +6,9 @@
       <ProductGrid />
     </div>
 
-    <!-- Cart Sidebar -->
+    <!-- Cart Sidebar sm:w-80 md:w-80 lg:w-80 -->
     <div
-      class="w-full sm:w-60 lg:w-80 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 flex flex-col order-1 sm:order-2 h-auto">
+      class="w-full sm:w-2/5 md:w-2/6 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 flex flex-col order-1 sm:order-2 h-auto">
       <CartSidebar @open-customer-modal="showCustomerModal = true" @open-payment-modal="showPaymentModal = true" />
     </div>
 
@@ -79,6 +79,12 @@ export default {
 @media (min-width: 1024px) {
   .lg\:w-80 {
     width: 27rem !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .md\:w-80 {
+    width: 21rem;
   }
 }
 </style>

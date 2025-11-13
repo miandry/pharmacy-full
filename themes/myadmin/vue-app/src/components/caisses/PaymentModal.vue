@@ -122,7 +122,7 @@ export default {
                     toast.error("Une erreur est survenue lors de l'ajout du commande.")
                     return
                 }
-                articleStore.clearCart();
+                articleStore.clearCart(true);
                 emit('close-payment-modal');
                 orderStore.loading = false;
                 toast.success('Commande ajouté avec succès !')

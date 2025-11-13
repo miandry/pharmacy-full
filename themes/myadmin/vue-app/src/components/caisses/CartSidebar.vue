@@ -3,7 +3,7 @@
         <div class="p-3 border-b border-gray-200">
             <div class="flex items-center justify-between mb-3">
                 <h2 class="text-base font-semibold text-gray-900">Commande actuelle</h2>
-                <button class="text-xs text-gray-500 hover:text-primary" @click="articleStore.clearCart">Tout
+                <button class="text-xs text-gray-500 hover:text-primary" @click="articleStore.clearCart(false)">Tout
                     effacer</button>
             </div>
             <div class="mb-3 p-2 bg-gray-50 rounded-lg">
@@ -41,6 +41,9 @@
             <div class="space-y-2 mb-3 max-h-68 overflow-y-auto" id="cart-items" v-if="articleStore.cardItems.length">
                 <div class="flex items-center justify-between py-2 border-b border-gray-100 gap-2"
                     v-for="item in articleStore.cardItems" :key="item.nid">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-full bg-red-100">
+                        <i class="ri-delete-bin-line text-red-500 text-lg" @click="removeItem(item)"></i>
+                    </div>
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-medium text-gray-900 text-xs truncate">{{ item.title }}</h3>
                         <p class="text-xs text-gray-500">{{ item.field_prix_unitaire }} Ar chacun</p>
@@ -185,7 +188,7 @@ export default {
                         toast.error("Une erreur est survenue lors de l'ajout du commande.")
                         return
                     }
-                    articleStore.clearCart();
+                    articleStore.clearCart(true);
                     orderStore.loading = false;
                     toast.success('Commande ajouté avec succès !')
                 } catch (err) {

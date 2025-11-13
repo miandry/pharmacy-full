@@ -85,14 +85,31 @@ export const useArticleStore = defineStore("article", () => {
     const index = cardItems.value.findIndex((i) => i.nid == item.nid);
     if (index !== -1) {
       const article = articles.value.rows.find((a) => a.nid == item.nid);
-      if (article)
+      if (article) {
         article.field_quantite_stock += cardItems.value[index].quantity;
+      }
       cardItems.value.splice(index, 1);
+      toast.success(() =>
+        h("div", [
+          h("span", item.title),
+          h("br"),
+          "a été retiré du panier !",
+        ])
+      );
     }
   }
 
-  function clearCart() {
-    cardItems.value.splice(0);
+  function clearCart(order) {
+    if (order) {
+      cardItems.value.splice(0);
+    } else {
+      cardItems.value.forEach((item) => {
+        const article = articles.value.rows.find((a) => a.nid == item.nid);
+        if (article) article.field_quantite_stock += item.quantity;
+      });
+      cardItems.value.splice(0);
+      toast.success("Le panier a été vidé avec succès !");
+    }
   }
 
   // Calcul du total
