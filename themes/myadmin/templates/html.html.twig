@@ -48,6 +48,10 @@
     />
     <style>
       :where([class^="ri-"])::before { content: "\f3c2"; }
+      .page-wrapper :focus, .ui-dialog :focus {
+        outline: 2px dotted transparent;
+        box-shadow: none;
+      }
     </style>
     <script>
       tailwind.config = {

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full mb-24">
+  <div class="flex flex-col h-full mb-24 sm:mb-0">
     <!-- Champ de recherche -->
     <div class="mb-3">
       <div class="relative mb-3">
