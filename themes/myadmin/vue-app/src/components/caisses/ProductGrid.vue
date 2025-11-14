@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full">
+  <div class="flex flex-col h-full mb-24">
     <!-- Champ de recherche -->
     <div class="mb-3">
       <div class="relative mb-3">
@@ -10,13 +10,34 @@
         <input v-model="searchKeyword" @keyup.enter="onSearch" type="text" placeholder="Rechercher des produits..."
           class="w-full pl-10 pr-4 py-2 border border-gray-200 !rounded-button text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
       </div>
+      <div class="flex space-x-2 overflow-x-auto scrollbar-hide mb-2" v-if="history.length">
+        <button @click="searchFromHistory('')" :class="[
+          'px-3 py-1.5 rounded-button whitespace-nowrap text-xs font-medium uppercase',
+          activeButton === 'all' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+        ]">
+          Tous
+        </button>
+        <button v-for="item in history" :key="item" @click="searchFromHistory(item)" :class="[
+          'px-3 py-1.5 rounded-button whitespace-nowrap text-xs font-medium uppercase',
+          activeButton === item ? 'bg-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+        ]">
+          {{ item }}
+        </button>
+      </div>
     </div>
 
     <!-- Grille de produits -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-2 overflow-y-auto">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-2 overflow-y-auto"
+      v-if="store.articles.rows.length">
       <product-card v-for="article in store.articles.rows" :key="article.nid" :article="article"
         @add-to-cart="handleAddToCart"
         class="bg-white rounded-lg p-2 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow product-card"></product-card>
+    </div>
+    <div class="flex justify-center items-center mt-24"
+      v-else>
+      <h1 class="text-gray-500 text-lg">
+        Aucun produits trouvé
+      </h1>
     </div>
 
     <!-- Bouton Voir plus -->
@@ -29,19 +50,23 @@
   </div>
 </template>
 
+
 <script>
 import { ref, onMounted, watch } from 'vue'
 import { useArticleStore } from '../../stores/index.js'
 import ProductCard from '../caisses/ProductCard.vue'
-import { toast } from 'vue-sonner';
-import { h } from 'vue';
+import { toast } from 'vue-sonner'
+import { h } from 'vue'
 
 export default {
   name: 'ProductGrid',
   components: { ProductCard },
   setup() {
     const store = useArticleStore()
+
     const searchKeyword = ref('')
+    const history = ref([])
+    const activeButton = ref('')
 
     // Paramètres dynamiques de la requête
     const queryOptions = ref({
@@ -63,11 +88,38 @@ export default {
       await store.fetchArticles(queryOptions.value, append)
     }
 
-    // Recherche (entrée clavier)
+    // Sauvegarde l’historique (max 5)
+    function saveHistory(term) {
+      if (!term) return
+
+      // Supprime doublons
+      history.value = history.value.filter(t => t !== term)
+
+      // Ajoute au début
+      history.value.unshift(term)
+
+      // Max 5
+      history.value = history.value.slice(0, 5)
+
+      // Sauvegarde dans localStorage
+      localStorage.setItem('search_history', JSON.stringify(history.value))
+    }
+
+    // Recherche
     const onSearch = () => {
-      queryOptions.value.pager = 0 // reset pagination
+      // Enregistrer dans l’historique
+      saveHistory(searchKeyword.value)
+
+      queryOptions.value.pager = 0
       updateFilter('title', searchKeyword.value, 'CONTAINS')
       fetchArticles(false)
+    }
+
+    // Clic sur un bouton de l’historique
+    const searchFromHistory = (term) => {
+      searchKeyword.value = term
+      activeButton.value = term || 'all'
+      onSearch()
     }
 
     // Bouton "Voir plus"
@@ -79,15 +131,14 @@ export default {
     // Add to cart
     function handleAddToCart(article) {
       if (article.field_quantite_stock > 0) {
-        // article.field_quantite_stock--
-        store.addItem(article);
+        store.addItem(article)
         toast.success(() =>
           h('div', [
             'Ajouté au panier !',
             h('br'),
             h('span', article.title)
           ])
-        );
+        )
       } else {
         toast.warning(() =>
           h('div', [
@@ -95,10 +146,9 @@ export default {
             h('br'),
             h('span', article.title)
           ])
-        );
+        )
       }
     }
-
 
     // Déterminer si on peut charger plus
     const canLoadMore = ref(true)
@@ -118,17 +168,28 @@ export default {
     }
 
     // Chargement initial
-    onMounted(() => fetchArticles(false))
+    onMounted(() => {
+      // Charger l’historique depuis localStorage
+      const saved = localStorage.getItem('search_history')
+
+      // Si existe, parser, sinon tableau vide
+      history.value = saved ? JSON.parse(saved) : []
+
+      fetchArticles(false)
+    })
 
     return {
       store,
       searchKeyword,
+      history,
       queryOptions,
       updateFilter,
       onSearch,
+      searchFromHistory,
       loadMore,
       canLoadMore,
-      handleAddToCart
+      handleAddToCart,
+      activeButton
     }
   }
 }

@@ -2,7 +2,7 @@
   <div class="flex flex-col sm:flex-row h-[calc(100vh-80px)]">
     <PageLoader v-if="clientStore.loading || articleStore.loading || orderStore.loading" />
     <!-- Product Grid Section -->
-    <div class="flex-1 p-3 order-2 sm:order-1 flex flex-col">
+    <div class="flex-1 p-3 order-2 sm:order-1 flex flex-col mw-910">
       <ProductGrid />
     </div>
 
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
 import ProductGrid from '../components/caisses/ProductGrid.vue'
 import CartSidebar from '../components/caisses/CartSidebar.vue'
 import ClientModal from '../components/caisses/ClientModal.vue'
@@ -76,6 +75,20 @@ export default {
 </script>
 
 <style>
+.mw-910 {
+  max-width: 910px;
+  overflow-x: auto;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 @media (min-width: 1024px) {
   .lg\:w-80 {
     width: 27rem !important;
