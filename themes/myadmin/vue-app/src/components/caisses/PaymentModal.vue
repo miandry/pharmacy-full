@@ -109,11 +109,12 @@ export default {
                 const data = {
                     entity_type: "node",
                     bundle: "commande",
-                    title: "order " + orderToCreate.clientName,
+                    title: "order-" + Date.now(),
                     field_client: orderToCreate.clientId,
                     clientName: orderToCreate.clientName,
                     field_articles: allArticles,
                     field_total_vente: orderToCreate.total,
+                    field_date: formatDateUS(),
                     status: 1,
                     field_status: "payed"
                 };
@@ -149,6 +150,14 @@ export default {
                 // annuler / fermer
                 emit('close-payment-modal');
             }
+        };
+
+        const formatDateUS = () => {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const year = now.getFullYear();
+            return `${year}-${month}-${day}`;
         };
 
         onMounted(() => {

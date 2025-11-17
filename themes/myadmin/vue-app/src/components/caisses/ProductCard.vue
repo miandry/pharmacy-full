@@ -1,9 +1,8 @@
 <template>
   <div class="article-card" @click="addToCart">
     <div class="aspect-square mb-1 rounded-md overflow-hidden">
-      <img
-        src="https://readdy.ai/api/search-image?query=Vitamin%20C%20tablets%20in%20modern%20pharmacy%20bottle%20with%20orange%20label%2C%20clean%20medical%20background%2C%20professional%20pharmaceutical%20product%20photography%2C%20soft%20natural%20lighting%2C%20clinical%20and%20sterile%20aesthetic&width=200&height=200&seq=vitaminc1&orientation=squarish"
-        alt="Paracetamol 500mg" class="w-full h-full object-cover object-top">
+      <img :src="article.field_image?.image?.url || '/sites/default/files/2025-11/defaultProductImage.png'"
+        alt="Article" class="w-full h-full object-cover object-top">
     </div>
     <h3 class="font-bold text-gray-900 mb-1 text-xs line-clamp-2" style="height: 35px;">{{ article.title }}</h3>
     <div class="mb-1">
@@ -53,7 +52,6 @@ export default {
     function addToCart() {
       emit('add-to-cart', props.article)
     }
-
     // Tout ce qu'on retourne ici sera accessible dans le template
     return {
       addToCart
