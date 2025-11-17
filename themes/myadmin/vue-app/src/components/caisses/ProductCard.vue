@@ -1,7 +1,7 @@
 <template>
   <div class="article-card" @click="addToCart">
     <div class="aspect-square mb-1 rounded-md overflow-hidden">
-      <img :src="article.field_image?.image?.url || '/sites/default/files/2025-11/defaultProductImage.png'"
+      <img :src="article.field_image?.image?.url || '/sites/default/files/2025-11/defaultProductImage_0.png'"
         alt="Article" class="w-full h-full object-cover object-top">
     </div>
     <h3 class="font-bold text-gray-900 mb-1 text-xs line-clamp-2" style="height: 35px;">{{ article.title }}</h3>

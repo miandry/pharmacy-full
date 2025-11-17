@@ -105,7 +105,7 @@
         <div class="block sm:hidden fixed bottom-0 left-0 right-0 mx-auto bg-white border-t border-gray-200 z-30">
             <div class="px-4 py-3">
                 <div class="flex items-center justify-between mb-3 cursor-pointer" @click="isCartOpen = !isCartOpen">
-                    <h2 class="text-sm font-semibold text-gray-900">Commande actuelle</h2>
+                    <h2 class="text-sm font-semibold text-gray-900">Voir commande actuelle</h2>
                     <div class="flex items-center space-x-2">
                         <span class="text-xs text-primary font-medium">
                             {{ articleStore.cardItems.length }} articles
@@ -203,13 +203,13 @@
                             <span>Sauvegarder as non payé</span>
                         </button>
                     </div>
-                </div>
-                <div class="flex-1">
-                    <button
-                        class="w-full py-2 bg-secondary hover:bg-green-600 text-white !rounded-button font-semibold text-sm whitespace-nowrap"
-                        @click="handleFinalizeSale">
-                        Finaliser la vente
-                    </button>
+                    <div class="flex-1">
+                        <button
+                            class="w-full py-2 bg-secondary hover:bg-green-600 text-white !rounded-button font-semibold text-sm whitespace-nowrap"
+                            @click="handleFinalizeSale">
+                            Finaliser la vente
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

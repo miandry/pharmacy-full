@@ -20,7 +20,7 @@ export function buildQueryParams(options) {
   // Filters
   if (options.filters && Object.keys(options.filters).length > 0) {
     for (const [key, filter] of Object.entries(options.filters)) {
-      if (filter?.val) {
+      if (filter?.val !== null && filter?.val !== undefined && filter?.val !== '') {
         params.append(`filters[${key}][val]`, filter.val);
         if (filter.op) params.append(`filters[${key}][op]`, filter.op);
       }
