@@ -75,10 +75,6 @@ import { computed, reactive, ref } from 'vue';
 export default {
   name: 'ClientModal',
   props: {
-    isOpen: {
-      type: Boolean,
-      required: true
-    },
     client: {
       type: Object,
       default: null

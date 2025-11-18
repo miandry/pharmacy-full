@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { buildQueryParams } from "../../utils/queryBuilder.js";
-import { getOrders, saveOrder, saveParagraph } from "../../services/order.js";
+import { getOrder, getOrders, saveOrder } from "../../services/order.js";
 
 export const useOrderStore = defineStore("order", () => {
   const orders = ref({ rows: [], total: 0 });
@@ -16,7 +16,19 @@ export const useOrderStore = defineStore("order", () => {
       const query = buildQueryParams(options);
       const response = await getOrders(query);
       orders.value = response.data;
-      // console.log(clients.value);
+    } catch (err) {
+      error.value = err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchOrder(id ,options) {
+    loading.value = true;
+    try {
+      const query = buildQueryParams(options);
+      const response = await getOrder(id, query);
+      order.value = response.data;
     } catch (err) {
       error.value = err;
     } finally {
@@ -38,6 +50,8 @@ export const useOrderStore = defineStore("order", () => {
     createOrder,
     fetchOrders,
     orders,
+    fetchOrder,
+    order,
     loading,
     error,
   };

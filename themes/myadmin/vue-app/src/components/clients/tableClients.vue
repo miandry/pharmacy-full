@@ -143,9 +143,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Modal d'ajout/modification -->
-    <ClientModal :is-open="modalOpen" :client="editingClient" @close="closeModal" @save="saveClient" />
   </div>
 
 </template>
