@@ -68,7 +68,7 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="client in clients" :key="client.nid" class="hover:bg-gray-50">
+          <tr v-for="client in clients.rows" :key="client.nid" class="hover:bg-gray-50">
 
             <td class="px-4 py-4">
               <input type="checkbox" v-model="selectedClients" :value="client.id"
@@ -106,22 +106,20 @@
       </table>
 
       <!-- Empty State -->
-      <div v-if="clients.length === 0" class="text-center py-8">
+      <div v-if="clients.rows.length === 0" class="text-center py-8">
         <i class="ri-user-search-line text-4xl text-gray-300 mb-2"></i>
         <p class="text-gray-500">Aucun client trouvé</p>
       </div>
     </div>
     <!-- Pagination and Bulk Actions -->
-    <!-- <div class="px-4 py-3 border-t border-gray-200 flex flex-col md:flex-row md:items-center justify-between">
+    <div class="px-4 py-3 border-t border-gray-200 flex flex-col md:flex-row md:items-center justify-center"
+      v-if="clients.total > 10">
       <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0">
-        <span class="text-sm text-gray-700 order-2 md:order-1">
-          Affichage {{ startIndex }}-{{ endIndex }} sur {{ totalClients }}
-        </span>
         <div class="flex flex-wrap justify-center gap-1 order-1 md:order-2">
-          <button @click="previousPage" :disabled="currentPage === 1" :class="[
+          <button @click="previousPage" :class="[
             'px-2 md:px-3 py-1 text-xs md:text-sm !rounded-button',
             currentPage === 1
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed hidden'
               : 'bg-gray-100 hover:bg-gray-200'
           ]">
             Précédent
@@ -137,14 +135,14 @@
           <button @click="nextPage" :disabled="currentPage === totalPages" :class="[
             'px-2 md:px-3 py-1 text-xs md:text-sm !rounded-button',
             currentPage === totalPages
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed hidden'
               : 'bg-gray-100 hover:bg-gray-200'
           ]">
             Suivant
           </button>
         </div>
       </div>
-    </div> -->
+    </div>
 
     <!-- Modal d'ajout/modification -->
     <ClientModal :is-open="modalOpen" :client="editingClient" @close="closeModal" @save="saveClient" />
@@ -153,7 +151,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 export default {
   name: 'tableClients',
@@ -166,10 +164,55 @@ export default {
     }
   },
 
-  emits: ['searchKeyWords', 'filterBy'],
+  emits: ['searchKeyWords', 'filterBy', 'paginate'],
   setup(props, { emit }) {
     const searchQuery = ref("");
     const filterQueryActive = ref("all");
+    const perPage = 10;
+    const currentPage = ref(1);
+
+    const totalPages = computed(() => Math.ceil(props.clients.total / perPage));
+
+    // Pages visibles (3 pages max)
+    const visiblePages = computed(() => {
+      const pages = [];
+      const total = totalPages.value;
+      const current = currentPage.value;
+
+      if (total <= 3) {
+        // Si total ≤ 3 → affichage normal
+        for (let i = 1; i <= total; i++) pages.push(i);
+      } else {
+        // Toujours 3 pages visibles autour de la page active
+        if (current === 1) pages.push(1, 2, 3);
+        else if (current === total) pages.push(total - 2, total - 1, total);
+        else pages.push(current - 1, current, current + 1);
+      }
+
+      return pages;
+    });
+
+    // Actions
+    const goToPage = page => {
+      if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+        emit('paginate', currentPage.value)
+      }
+    };
+
+    const nextPage = () => {
+      if (currentPage.value < totalPages.value) {
+        currentPage.value++
+        emit('paginate', currentPage.value)
+      };
+    };
+
+    const previousPage = () => {
+      if (currentPage.value > 1) {
+        currentPage.value--
+        emit('paginate', currentPage.value)
+      };
+    };
 
     function searchByKeys() {
       emit('searchKeyWords', searchQuery.value)
@@ -180,11 +223,22 @@ export default {
       emit('filterBy', value);
     }
 
+    function editClient(client) {
+      emit('show', client);
+    }
+
     return {
       searchByKeys,
       searchQuery,
       filter,
-      filterQueryActive
+      filterQueryActive,
+      visiblePages,
+      currentPage,
+      totalPages,
+      goToPage,
+      nextPage,
+      previousPage,
+      editClient
     }
   }
 }
