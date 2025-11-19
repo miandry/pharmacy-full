@@ -10,12 +10,19 @@ export const useOrderStore = defineStore("order", () => {
   const error = ref(null);
 
   // Charger tout les commandes
-  async function fetchOrders(options) {
+  async function fetchOrders(options, append = false) {
     loading.value = true;
     try {
       const query = buildQueryParams(options);
       const response = await getOrders(query);
-      orders.value = response.data;
+      const data = response.data;
+      if (append && orders.value.rows.length) {
+        // Ajouter les nouvelles données à la liste existante
+        orders.value.rows = [...orders.value.rows, ...data.rows];
+      } else {
+        // Remplacer les données
+        orders.value = data;
+      }
     } catch (err) {
       error.value = err;
     } finally {
@@ -23,7 +30,7 @@ export const useOrderStore = defineStore("order", () => {
     }
   }
 
-  async function fetchOrder(id ,options) {
+  async function fetchOrder(id, options) {
     loading.value = true;
     try {
       const query = buildQueryParams(options);
@@ -36,7 +43,8 @@ export const useOrderStore = defineStore("order", () => {
     }
   }
 
-  async function createOrder(newOrderData) {
+  async function saveOrderData(newOrderData) {
+    loading.value = true;
     try {
       await saveOrder(newOrderData);
     } catch (err) {
@@ -47,7 +55,7 @@ export const useOrderStore = defineStore("order", () => {
   }
 
   return {
-    createOrder,
+    saveOrderData,
     fetchOrders,
     orders,
     fetchOrder,

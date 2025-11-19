@@ -2,7 +2,7 @@
     <div>
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <div class="p-6">
+                <div class="p-6 pb-0">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-xl font-semibold text-gray-900" id="modal-order-title">Détails de la commande
                             #{{ orderToShow.title }}</h3>
@@ -24,10 +24,11 @@
                                     </div>
                                     <div>
                                         <p class="font-medium text-gray-900">{{ orderToShow.field_client.title }}</p>
-                                        <p class="text-sm text-gray-500" id="modal-customer-phone">+261 34 12 345 67</p>
+                                        <p class="text-sm text-gray-500" id="modal-customer-phone">{{
+                                            orderToShow.field_client.field_phone }}</p>
                                     </div>
                                 </div>
-                                <div id="modal-customer-insurance" class="hidden">
+                                <div v-if="orderToShow.field_client.field_assurance == 1">
                                     <div class="flex items-center mt-2">
                                         <div class="w-2 h-2 bg-secondary rounded-full mr-2"></div>
                                         <span class="text-sm text-secondary font-medium">Client avec assurance</span>
@@ -122,24 +123,24 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap gap-3">
-                        <button
-                            class="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 !rounded-button font-medium whitespace-nowrap"
-                            @click="showStatusModal">
-                            <div class="w-4 h-4 flex items-center justify-center inline-block mr-1">
-                                <i class="ri-refresh-line"></i>
-                            </div>
-                            Changer statut
-                        </button>
-                        <button
-                            class="px-4 py-2 bg-gray-50 text-gray-600 hover:bg-gray-100 !rounded-button font-medium whitespace-nowrap"
-                            id="modal-print-invoice">
-                            <div class="w-4 h-4 flex items-center justify-center inline-block mr-1">
-                                <i class="ri-printer-line"></i>
-                            </div>
-                            Imprimer facture
-                        </button>
-                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3 px-6 pb-6">
+                    <button
+                        class="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 !rounded-button font-medium whitespace-nowrap"
+                        @click="showStatusModal">
+                        <div class="w-4 h-4 flex items-center justify-center inline-block mr-1">
+                            <i class="ri-refresh-line"></i>
+                        </div>
+                        Changer statut
+                    </button>
+                    <button
+                        class="px-4 py-2 bg-gray-50 text-gray-600 hover:bg-gray-100 !rounded-button font-medium whitespace-nowrap"
+                        @click="downloadPdf">
+                        <div class="w-4 h-4 flex items-center justify-center inline-block mr-1">
+                            <i class="ri-printer-line"></i>
+                        </div>
+                        Imprimer facture
+                    </button>
                 </div>
             </div>
         </div>
@@ -147,7 +148,7 @@
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { formatDate } from '../../utils/formateDate';
 
 export default {
@@ -160,14 +161,13 @@ export default {
     },
     emit: ['close-details-modal', 'show-edit-status-modal'],
     setup(props, { emit }) {
-
         const closeModal = () => {
             emit('close-details-modal');
         }
 
         const showStatusModal = () => {
             closeModal();
-            emit('show-edit-status-modal');
+            emit('show-edit-status-modal', props.orderToShow);
         }
 
         const statusMap = {
@@ -189,12 +189,11 @@ export default {
             }
         };
 
-
         return {
             closeModal,
             showStatusModal,
             formatDate,
-            statusMap
+            statusMap,
         }
     }
 }

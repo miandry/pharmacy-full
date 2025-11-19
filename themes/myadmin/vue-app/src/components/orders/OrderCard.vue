@@ -19,8 +19,9 @@
                     :class="`px-3 py-1 rounded-full text-xs font-medium ${statusStyle[order.field_status]}`">
                     {{ statusLabel[order.field_status] }}
                 </span>
-                <span class="text-lg font-bold text-primary">{{ Number(order.field_total_vente ||
-                    0).toLocaleString('fr-MG', { style: 'currency', currency: 'MGA' }) }}</span>
+                <span :class="[order.field_status == 'cancel' ? 'text-lg font-bold text-gray-400 line-through' : 'text-lg font-bold text-primary']">{{
+                    Number(order.field_total_vente ||
+                        0).toLocaleString('fr-MG', { style: 'currency', currency: 'MGA' }) }}</span>
             </div>
         </div>
 
@@ -34,7 +35,11 @@
                     </div>
                     <div>
                         <p class="font-medium text-gray-900 capitalize">{{ order.field_client.title }}</p>
-                        <p class="text-sm text-gray-500">+261 34 12 345 67</p>
+                        <p class="text-sm text-gray-500">{{ order.field_client.field_phone }}</p>
+                        <div class="flex items-center mt-1" v-if="order.field_client.field_assurance == 1">
+                            <div class="w-2 h-2 bg-secondary rounded-full mr-1"></div>
+                            <span class="text-xs text-secondary font-medium">Assurance</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -52,7 +57,7 @@
                         <span>
                             {{ (article.field_prix_unitaire * article.field_quantite).toLocaleString('fr-MG', {
                                 style: 'currency',
-                            currency: 'MGA'
+                                currency: 'MGA'
                             }) }}
                         </span>
                     </div>
@@ -109,7 +114,7 @@ export default {
     emits: ['show-edit-status-modal', 'show-details-modal'],
     setup(props, { emit }) {
         const showEditStatusModal = () => {
-            emit('show-edit-status-modal');
+            emit('show-edit-status-modal', props.order);
         }
 
         const showDetailsModal = () => {
@@ -130,7 +135,7 @@ export default {
             payed: {
                 bg: 'bg-green-100',
                 text: 'text-green-600',
-                icon: 'ri-check-double-line'
+                icon: 'ri-check-line'
             }
         };
 
@@ -145,7 +150,7 @@ export default {
             unpayed: "Non payé",
             cancel: "Annulée"
         };
-        
+
         return {
             showEditStatusModal,
             showDetailsModal,
