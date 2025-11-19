@@ -118,7 +118,7 @@ export default {
                     status: 1,
                     field_status: "payed"
                 };
-                await orderStore.saveOrder(data);
+                await orderStore.saveOrderData(data);
                 if (orderStore.error) {
                     toast.error("Une erreur est survenue lors de l'ajout du commande.")
                     return
