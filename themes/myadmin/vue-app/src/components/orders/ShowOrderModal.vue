@@ -2,7 +2,7 @@
     <div>
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <div class="p-6 pb-0">
+                <div class="p-6 pb-0 text-sm">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-xl font-semibold text-gray-900" id="modal-order-title">Détails de la commande
                             #{{ orderToShow.title }}</h3>
