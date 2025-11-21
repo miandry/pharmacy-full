@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { createRouter, createWebHistory } from 'vue-router';
 import blockZoom from './utils/blockZoom.js';
+import { PDFPlugin } from "vue3-pdfmake";
 
 import App from './App.vue'
 import Caisse from './pages/Caisse.vue'
@@ -31,6 +32,6 @@ const pinia = createPinia()
 document.addEventListener("DOMContentLoaded", () => {
   const el = document.querySelector('#vue-app')
   if (el) {
-    createApp(App).use(pinia).use(router).mount('#vue-app')
+    createApp(App).use(pinia).use(router).use(PDFPlugin).mount('#vue-app')
   }
 })

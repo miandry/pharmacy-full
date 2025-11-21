@@ -4,7 +4,7 @@
             <div class="flex items-center space-x-3 mb-2 md:mb-0">
 
                 <div v-if="statusMap[order.field_status]"
-                    :class="`w-10 h-10 rounded-full flex items-center justify-center ${statusMap[order.field_status].bg} ${statusMap[order.field_status].text}`">
+                    :class="`w-10 h-10 rounded-full flex items-center justify-center ${statusMap[order.field_status].bg}`">
                     <div class="w-5 h-5 flex items-center justify-center">
                         <i :class="statusMap[order.field_status].icon"></i>
                     </div>
@@ -19,9 +19,10 @@
                     :class="`px-3 py-1 rounded-full text-xs font-medium ${statusStyle[order.field_status]}`">
                     {{ statusLabel[order.field_status] }}
                 </span>
-                <span :class="[order.field_status == 'cancel' ? 'text-lg font-bold text-gray-400 line-through' : 'text-lg font-bold text-primary']">{{
-                    Number(order.field_total_vente ||
-                        0).toLocaleString('fr-MG', { style: 'currency', currency: 'MGA' }) }}</span>
+                <span
+                    :class="[order.field_status == 'cancel' ? 'text-lg font-bold text-gray-400 line-through' : 'text-lg font-bold text-primary']">{{
+                        Number(order.field_total_vente ||
+                            0).toLocaleString('fr-MG', { style: 'currency', currency: 'MGA' }) }}</span>
             </div>
         </div>
 
@@ -37,7 +38,8 @@
                         <p class="font-medium text-gray-900 capitalize">{{ order.field_client.title }}</p>
                         <p class="text-sm text-gray-500">{{ order.field_client.field_phone }}</p>
                         <div class="flex items-center mt-1">
-                            <span class="sm:hidden text-xs text-gray-500 me-2">{{ order.field_articles.length }} {{ order.field_articles.length > 1 ? 'produits' : 'produit'}}</span>
+                            <span class="sm:hidden text-xs text-gray-500 me-2">{{ order.field_articles.length }} {{
+                                order.field_articles.length > 1 ? 'produits' : 'produit'}}</span>
                             <div class="flex items-center mt-1" v-if="order.field_client.field_assurance == 1">
                                 <div class="w-2 h-2 bg-secondary rounded-full mr-1"></div>
                                 <span class="text-xs text-secondary font-medium">Assurance</span>
@@ -82,7 +84,7 @@
                 </div>
                 Changer statut
             </button>
-            <button
+            <button @click="downloadPdf(order)"
                 class="px-3 py-2 bg-gray-50 text-gray-600 hover:bg-gray-100 !rounded-button text-sm font-medium whitespace-nowrap print-invoice-btn"
                 data-order-id="CMD-2024-001">
                 <div class="w-4 h-4 flex items-center justify-center inline-block mr-1">
@@ -104,7 +106,8 @@
 
 <script>
 import { formatDate } from '../../utils/formateDate';
-
+import { usePDF } from "vue3-pdfmake";
+import { generateInvoicePdf } from '../../utils/invoicePdf.js';
 
 export default {
     name: 'OrderCard',
@@ -126,18 +129,18 @@ export default {
 
         const statusMap = {
             unpayed: {
-                bg: 'bg-yellow-100',
-                text: 'text-yellow-600',
+                bg: 'bg-yellow-100 text-yellow-600',
+                text: 'Non payé',
                 icon: 'ri-time-line'
             },
             cancel: {
-                bg: 'bg-red-100',
-                text: 'text-red-600',
+                bg: 'bg-red-100 text-red-600',
+                text: 'Annulée',
                 icon: 'ri-close-line'
             },
             payed: {
-                bg: 'bg-green-100',
-                text: 'text-green-600',
+                bg: 'bg-green-100 text-green-600',
+                text: 'Payé',
                 icon: 'ri-check-line'
             }
         };
@@ -154,13 +157,21 @@ export default {
             cancel: "Annulée"
         };
 
+        const pdfMake = usePDF();
+
+        const downloadPdf = (order) => {
+            generateInvoicePdf(order, statusMap, pdfMake);
+        };
+
+
         return {
             showEditStatusModal,
             showDetailsModal,
             statusMap,
             statusStyle,
             statusLabel,
-            formatDate
+            formatDate,
+            downloadPdf
         }
     }
 }

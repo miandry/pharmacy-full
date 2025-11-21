@@ -150,6 +150,9 @@
 <script>
 import { onMounted, ref } from 'vue';
 import { formatDate } from '../../utils/formateDate';
+import { usePDF } from "vue3-pdfmake";
+import { generateInvoicePdf } from '../../utils/invoicePdf.js';
+
 
 export default {
     name: "ShowOrderModal",
@@ -189,11 +192,18 @@ export default {
             }
         };
 
+        const pdfMake = usePDF();
+
+        const downloadPdf = () => {
+            generateInvoicePdf(props.orderToShow, statusMap, pdfMake);
+        };
+
         return {
             closeModal,
             showStatusModal,
             formatDate,
             statusMap,
+            downloadPdf
         }
     }
 }
